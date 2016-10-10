@@ -49,14 +49,20 @@ def handle(msg):
 
             msg_list = msg['text'].split()
 
-            if len(msg_list) >= 3:
-                msg_begin, keyword, msg_end = msg['text'].partition(msg_list[2])
-                action_text = ' ' + keyword + msg_end
-            else:
-                action_text = ''
-
             if len(msg_list) >= 2:
-                value = str(value) + ' + ' + msg_list[1]
+                try: 
+                    if isinstance(eval(msg_list[1]), int):
+                        value = str(value) + ' + ' + msg_list[1]
+                        labelat = 2
+                except NameError:
+                    labelat = 1
+
+                if len(msg_list) >= (labelat + 1):
+                    msg_begin, keyword, msg_end = msg['text'].partition(msg_list[labelat])
+                    action_text = ' ' + keyword + msg_end
+                else:
+                    action_text = ''
+
 
             result = eval(str(value))
 
@@ -72,7 +78,8 @@ def handle(msg):
             else:
                 ladder_result = ladder[result]
 
-            pprint(msg)
+            # === Uncomment for Debugging ===
+            # pprint(msg)
 
             if 'username' in msg['from'].keys():
                 user = msg['from']['username']
