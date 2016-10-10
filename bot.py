@@ -49,6 +49,7 @@ def handle(msg):
 
             msg_list = msg['text'].split()
 
+            action_text = ''
             if len(msg_list) >= 2:
                 try: 
                     if isinstance(eval(msg_list[1]), int):
@@ -60,8 +61,6 @@ def handle(msg):
                 if len(msg_list) >= (labelat + 1):
                     msg_begin, keyword, msg_end = msg['text'].partition(msg_list[labelat])
                     action_text = ' ' + keyword + msg_end
-                else:
-                    action_text = ''
 
 
             result = eval(str(value))
