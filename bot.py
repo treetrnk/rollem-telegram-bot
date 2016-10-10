@@ -12,7 +12,7 @@ def handle(msg):
     print(content_type, chat_type, chat_id)
 
     options = { 
-        -1 : '[-]', 
+        -1 : '[‒]', 
         0  : '[  ]', 
         1  : '[+]' 
     }
@@ -33,7 +33,7 @@ def handle(msg):
 
     if content_type == 'text':
         print(content)
-        if content.startswith('/roll'):
+        if content.startswith('/roll') or content.startswith('/r'):
             counter = 0
             value = 0
 
@@ -45,23 +45,37 @@ def handle(msg):
                 value += choice
                 counter += 1
 
-            if value > -1:
-                print('+')
-
             print(value)
 
-            if value < -2:
-                print('Beyond Terrible')
-            elif value > 8:
-                print('Beyond Legendary')
+            msg_list = msg['text'].split()
+
+            if len(msg_list) >= 2:
+                value = str(value) + ' + ' + msg_list[1]
+
+            result = eval(str(value))
+
+            if result > -1:
+                sign = '+'
             else:
-                print(ladder[value])
+                sign = ''
+
+            if result < -2:
+                ladder_result = 'Beyond Terrible'
+            elif result > 8:
+                ladder_result = 'Beyond Legendary'
+            else:
+                ladder_result = ladder[result]
 
             pprint(msg)
 
-            bot.sendMessage(
-                chat_id, msg['chat']['username'] + ' rolled: ' + ', '.join(dice)
-                + ' = ' + str(value)
+            if 'username' in msg['from'].keys():
+                user = msg['from']['username']
+            else:
+                user = msg['from']['first_name'] 
+
+            bot.sendMessage(chat_id, user + ' rolled:\r\n'
+                + ', '.join(dice) + ' = ' + str(value) + ' =\r\n' +  
+                sign + str(result) + ' ' + ladder_result
             )
 
 TOKEN = sys.argv[1] # get token from command line
