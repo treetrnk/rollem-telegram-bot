@@ -49,6 +49,12 @@ def handle(msg):
 
             msg_list = msg['text'].split()
 
+            if len(msg_list) >= 3:
+                msg_begin, keyword, msg_end = msg['text'].partition(msg_list[2])
+                action_text = ' ' + keyword + msg_end
+            else:
+                action_text = ''
+
             if len(msg_list) >= 2:
                 value = str(value) + ' + ' + msg_list[1]
 
@@ -73,7 +79,7 @@ def handle(msg):
             else:
                 user = msg['from']['first_name'] 
 
-            bot.sendMessage(chat_id, user + ' rolled:\r\n'
+            bot.sendMessage(chat_id, user + ' rolled' + action_text + ':\r\n'
                 + ', '.join(dice) + ' = ' + str(value) + ' =\r\n' +  
                 sign + str(result) + ' ' + ladder_result
             )
