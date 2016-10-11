@@ -1,5 +1,5 @@
 # RollEm Telegram Bot
-A dice rolling bot for [Telegram](https://telegram.org). [Click here](https://telegram.me/rollembot) to use this bot in Telegram.
+A dice rolling bot for [Telegram](https://telegram.org). To use this bot in Telegram, [click here](https://telegram.me/rollembot).
 
 ## Requires
 * Telepot - See https://github.com/nickoala/telepot for installation instructions.
