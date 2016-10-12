@@ -70,8 +70,13 @@ class Input:
 
         print(self.content_type, self.chat_type, self.chat_id)
 
-    def get_params(self): # TODO: Return label params regardless
+    def get_params(self):
+        # Set defaults
         parameters = {}
+        parameters['modifier'] = ''
+        parameters['label'] = ''
+        
+        # Get parameters if provided
         if len(self.content_list) >= 2:
             try: 
                 if isinstance(eval(self.content_list[1]), int):
