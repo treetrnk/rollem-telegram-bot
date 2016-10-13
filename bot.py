@@ -3,6 +3,7 @@ import sys
 import time
 import telepot
 import random
+import re
 
 options = { 
     -1 : '[‒]', 
@@ -28,6 +29,11 @@ class Input:
     def __init__(self):
         self.isset = False
         self.is_command = False
+        self.commands = [
+            '/r',
+            '/roll',
+            '/rf'
+        ]
 
     def set_attrbs(self, msg):
         self.isset = True
@@ -43,31 +49,10 @@ class Input:
         if self.content_type == 'text':
             self.content = msg['text']
             self.content_list = self.content.split()
-            if self.content.startswith('/roll') or self.content.startswith('/r'):
+            if self.content_list[0] in self.commands:
                 self.is_command = True
 
         print(self.content_type, self.chat_type, self.chat_id)
-
-    # Roll dice
-    def roll(self):
-        result = []
-
-        counter = 0
-        value = 0
-
-        individual_dice = []
-        dice = []
-
-        while counter < 4:
-            choice = random.choice(list(options.keys()))
-            individual_dice.append(options[choice])
-            value += choice
-            counter += 1
-
-        dice.append(individual_dice)
-        dice.append(value)
-        result.append(dice)
-        return result
 
     def get_params(self):
         # Set defaults
@@ -89,20 +74,51 @@ class Input:
                 parameters['label'] = ' ' + keyword + msg_end
         return parameters
 
+    # Roll dice
+    def roll(self):
+        if self.content_list[0] == '/rf':
+            parameters = self.get_params()
+            if len(parameters['modifier']):
+                self.equation = '4dF+' + str(parameters['modifier'])
+            else:
+                self.equation = '4dF'
+        else: 
+            self.equation = self.content_list[1]
 
-    def respond(self):
+        equation_list = re.split('+ |- |* |/', self.equation)
+        print(equation_list)
+
+        result = []
+
+        counter = 0
+        value = 0
+
+        individual_dice = []
+        dice = []
+
+        while counter < 4:
+            choice = random.choice(list(options.keys()))
+            individual_dice.append(options[choice])
+            value += choice
+            counter += 1
+
+        dice.append(individual_dice)
+        dice.append(value)
+        result.append(dice)
+        return result
+
+    def process(self):
         #Get list of dice in content
         #if self.content_list[1] == '' #Regex representing dice notation equation
         #
         #rolls = []
 
         outcome = self.roll()
-        parameters = self.get_params()
         result = eval(str(outcome[0][1]))
 
         # Set die results plus modifier
-        if len(parameters['modifier']):
-            final_result = str(result) + ' + ' + str(parameters['modifier'])
+        if len(self.parameters['modifier']):
+            final_result = str(result) + ' + ' + str(self.parameters['modifier'])
         else:
             final_result = str(result)
 
@@ -120,21 +136,22 @@ class Input:
         else:
             ladder_result = ladder[eval(final_result)]
 
-        # === Uncomment for Debugging ===
-        # print(msg)
+        response = (self.user + ' rolled' + self.parameters['label'] + ':\r\n'        
+            + ' '.join(outcome[0][0]) + ' = ' + final_result + ' =\r\n' +  
+            sign + str(eval(final_result)) + ' ' + ladder_result)
 
         # Respond to user with results
-        bot.sendMessage(self.chat_id, self.user + ' rolled' + parameters['label'] + ':\r\n'
-            + ' '.join(outcome[0][0]) + ' = ' + final_result + ' =\r\n' +  
-            sign + str(eval(final_result)) + ' ' + ladder_result
-        )
+        bot.sendMessage(self.chat_id, response)
 
+        # === Uncomment for Debugging ===
+        # print(msg)
+    
 current_input = Input()
 
 def handle(msg):
     current_input.set_attrbs(msg)
     if current_input.is_command:
-        current_input.respond()
+        current_input.process()
 
 TOKEN = sys.argv[1] # get token from command line
 
