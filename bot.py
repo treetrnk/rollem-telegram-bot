@@ -49,24 +49,24 @@ class Input:
         print(self.content_type, self.chat_type, self.chat_id)
 
     # Roll dice
-    def roll(self, notation):
+    def roll(self):
         result = []
-        for die_roll in notation:
-            counter = 0
-            value = 0
 
-            individual_dice = []
-            dice = []
+        counter = 0
+        value = 0
 
-            while counter < 4:
-                choice = random.choice(list(options.keys()))
-                individual_dice.append(options[choice])
-                value += choice
-                counter += 1
-    
-            dice.append(individual_dice)
-            dice.append(value)
-            result.append(dice)
+        individual_dice = []
+        dice = []
+
+        while counter < 4:
+            choice = random.choice(list(options.keys()))
+            individual_dice.append(options[choice])
+            value += choice
+            counter += 1
+
+        dice.append(individual_dice)
+        dice.append(value)
+        result.append(dice)
         return result
 
     def get_params(self):
@@ -96,7 +96,7 @@ class Input:
         #
         #rolls = []
 
-        outcome = self.roll(['4dF'])
+        outcome = self.roll()
         parameters = self.get_params()
         result = eval(str(outcome[0][1]))
 
@@ -107,18 +107,18 @@ class Input:
             final_result = str(result)
 
         # Set if final result is positive or negative
-        if eval(str(final_result)) > -1:
+        if eval(final_result) > -1:
             sign = '+'
         else:
             sign = ''
 
         # Set ladder value for final result
-        if eval(str(final_result)) < -2:
+        if eval(final_result) < -2:
             ladder_result = 'Beyond Terrible'
-        elif eval(str(final_result)) > 8:
+        elif eval(final_result) > 8:
             ladder_result = 'Beyond Legendary'
         else:
-            ladder_result = ladder[result]
+            ladder_result = ladder[eval(final_result)]
 
         # === Uncomment for Debugging ===
         # print(msg)
