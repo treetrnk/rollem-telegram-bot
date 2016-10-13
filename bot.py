@@ -24,35 +24,13 @@ ladder = {
     -2 : 'Terrible'
 }
 
-class Dice:
-    def __init__(self, notation):
-        self.notation = notation
-
-    def roll(self):
-
-        result = []
-        for die_roll in self.notation:
-            counter = 0
-            value = 0
-
-            individual_dice = []
-            dice = []
-
-            while counter < 4:
-                choice = random.choice(list(options.keys()))
-                individual_dice.append(options[choice])
-                value += choice
-                counter += 1
-    
-            dice.append(individual_dice)
-            dice.append(value)
-            result.append(dice)
-
-        return result
-
-
 class Input:
-    def __init__(self, msg):
+    def __init__(self):
+        self.isset = False
+        self.is_command = False
+
+    def set_attrbs(self, msg):
+        self.isset = True
         self.msg = msg
         self.content_type, self.chat_type, self.chat_id = telepot.glance(msg)
         if 'username' in msg['from'].keys():
@@ -70,6 +48,27 @@ class Input:
 
         print(self.content_type, self.chat_type, self.chat_id)
 
+    # Roll dice
+    def roll(self, notation):
+        result = []
+        for die_roll in notation:
+            counter = 0
+            value = 0
+
+            individual_dice = []
+            dice = []
+
+            while counter < 4:
+                choice = random.choice(list(options.keys()))
+                individual_dice.append(options[choice])
+                value += choice
+                counter += 1
+    
+            dice.append(individual_dice)
+            dice.append(value)
+            result.append(dice)
+        return result
+
     def get_params(self):
         # Set defaults
         parameters = {}
@@ -80,7 +79,7 @@ class Input:
         if len(self.content_list) >= 2:
             try: 
                 if isinstance(eval(self.content_list[1]), int):
-                    paramaters['modifier'] = str(value) + ' + ' + self.content_list[1]
+                    parameters['modifier'] = self.content_list[1]
                     labelat = 2
             except NameError:
                 labelat = 1
@@ -97,23 +96,23 @@ class Input:
         #
         #rolls = []
 
-        dice = Dice(['4df'])
-        outcome = dice.roll()
-
+        outcome = self.roll(['4dF'])
         parameters = self.get_params()
-
         result = eval(str(outcome[0][1]))
-        
-        try:
-            final_result = str(result+paramaters['modifier'])
-        except NameError:
-            final_result = result
 
+        # Set die results plus modifier
+        if len(parameters['modifier']):
+            final_result = str(result) + ' + ' + str(parameters['modifier'])
+        else:
+            final_result = str(result)
+
+        # Set if final result is positive or negative
         if eval(str(final_result)) > -1:
             sign = '+'
         else:
             sign = ''
 
+        # Set ladder value for final result
         if eval(str(final_result)) < -2:
             ladder_result = 'Beyond Terrible'
         elif eval(str(final_result)) > 8:
@@ -124,15 +123,18 @@ class Input:
         # === Uncomment for Debugging ===
         # print(msg)
 
+        # Respond to user with results
         bot.sendMessage(self.chat_id, self.user + ' rolled' + parameters['label'] + ':\r\n'
-            + ', '.join(dice) + ' = ' + final_result + ' =\r\n' +  
-            sign + eval(str(final_result)) + ' ' + ladder_result
+            + ' '.join(outcome[0][0]) + ' = ' + final_result + ' =\r\n' +  
+            sign + str(eval(final_result)) + ' ' + ladder_result
         )
 
+current_input = Input()
+
 def handle(msg):
-    msg = Input(msg)
-    if msg.is_command:
-        msg.respond()
+    current_input.set_attrbs(msg)
+    if current_input.is_command:
+        current_input.respond()
 
 TOKEN = sys.argv[1] # get token from command line
 
