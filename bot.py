@@ -111,6 +111,7 @@ class Input:
             for i in pair:
                 dice = re.search(r'(\d*)d([0-9fF]+)', str(i))
                 if dice:
+                    result.append('(')
                     # Set number of dice to roll
                     if len(dice.group(1)):
                         loop_num = eval(str(dice.group(1))) 
@@ -132,7 +133,9 @@ class Input:
                         loop_num -= 1
                     
                     result.append(current_die_results)
+                    result.append(')')
                 else:
+                    result.append(' ')
                     result.append(i)
 
         print(result)
