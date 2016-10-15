@@ -52,7 +52,7 @@ class Input:
         print(self.content_type, self.chat_type, self.chat_id)
 
     ####################
-    ## Get Parameters ## Can be dissolved into Roll() I think
+    ## Get Parameters ##
     ####################
     def get_params(self):
         # Set defaults
@@ -111,7 +111,7 @@ class Input:
             for i in pair:
                 dice = re.search(r'(\d*)d([0-9fF]+)', str(i))
                 if dice:
-                    result.append('(')
+                    result.append(' (')
                     # Set number of dice to roll
                     if len(dice.group(1)):
                         loop_num = eval(str(dice.group(1))) 
@@ -177,9 +177,6 @@ class Input:
         # Respond to user with results
         bot.sendMessage(self.chat_id, response)
 
-        # === Uncomment for Debugging ===
-        # print(msg)
-    
 current_input = Input()
 
 def handle(msg):
