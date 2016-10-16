@@ -18,6 +18,141 @@ ladder = {
     -1 : 'Poor',
     -2 : 'Terrible'
 }
+      ##########################################
+######## Used for any commands that roll dice ########
+########  CMDs: /roll, /r, /rf                ########
+      ##########################################
+class Dice:
+    def __init__(self):
+        self.fate_options = { 
+            -1 : '[‒]', 
+            0  : '[  ]', 
+            1  : '[+]' 
+        }
+
+    ####################
+    ## Set Attributes ##
+    ####################
+    def set_attrbs(self, content_list):
+        self.content_list = content_list
+        self.label = ''
+        self.modifier = ''
+        
+        # Find label and modifier if they exist
+        labelat = 2
+        if self.content_list[0] == '/rf':
+            if len(self.content_list) >= 2:
+                try:
+                    if isinstance(eval(self.content_list[1]), int):
+                        self.modifier = self.content_list[1]
+                        labelat = 2
+                except NameError:
+                    labelat = 1
+            self.equation = '4dF' + '+' + str(self.modifier)
+        else:
+            self.equation = content_list[1]
+
+        if len(self.content_list) >= (labelat + 1):
+            msg_begin, keyword, msg_end = curnt_input.content.partition(self.content_list[labelat])
+            self.label = ' ' + keyword + msg_end
+
+        print(self.equation)
+            
+        # Break apart equation by operators
+        self.equation_list = re.findall(r'([(]?)(\w+)([+*/()-]*)', self.equation)
+
+    ##################
+    ##  Get ladder  ##
+    ##################
+    def get_ladder(self):
+        # Set if final result is positive or negative
+        if self.result['total'] > -1:
+            sign = '+'
+        else:
+            sign = ''
+
+        # Set ladder value for final result
+        if self.result['total'] < -2:
+            ladder_result = 'Beyond Terrible'
+        elif self.result['total'] > 8:
+            ladder_result = 'Beyond Legendary'
+        else:
+            ladder_result = ladder[self.result['total']]
+
+        self.result['total'] = sign + str(self.result['total']) + ' ' + ladder_result
+
+    ################
+    ##  Roll dice ##
+    ################
+    def roll(self):
+
+        self.result = {
+            'visual': [],
+            'equation': [],
+            'total': ''
+        }
+
+        # Break apart each chunk of the equation by numbers and letters 
+        # if dice notation
+        space = ''
+        isfate = False
+        use_ladder = False
+        for pair in self.equation_list:
+            for i in pair:
+                dice = re.search(r'(\d*)d([0-9fF]+)', str(i))
+                if dice:
+                    self.result['visual'].append(space + '(')
+                    self.result['equation'].append('(')
+                    space = ' '
+                    # Set number of dice to roll
+                    if len(dice.group(1)):
+                        loop_num = eval(str(dice.group(1))) 
+                    else:
+                        loop_num = 1
+
+                    fate_dice = ''
+                    current_die_results = ''
+                    plus = ''
+                    
+                    # Roll dice
+                    while loop_num > 0:
+                        if dice.group(2) == 'f' or dice.group(2) == 'F':
+                            isfate = True
+                            current_fate_die = random.choice(list(self.fate_options.keys()))
+                            current_die_results += plus + str(current_fate_die)
+                            fate_dice += self.fate_options[current_fate_die] + ' '
+                        else: 
+                            current_die_results += plus + str(random.randint(1,eval(dice.group(2))))
+                        if len(plus) is 0: # Adds all results to result unless it is the first one
+                            plus = ' + '
+                        loop_num -= 1
+                    
+                    if isfate:
+                        isfate = False
+                        use_ladder = True
+                        self.result['visual'].append(' ' + fate_dice)
+                    else:
+                        self.result['visual'].append(current_die_results)
+                    self.result['equation'].append(current_die_results)
+                    self.result['visual'].append(')')
+                    self.result['equation'].append(')')
+                else:
+                    self.result['visual'].append(' ')
+                    self.result['visual'].append(i)
+                    self.result['equation'].append(i)
+
+        self.result['total'] = eval(str(''.join(self.result['equation'])))
+
+        if use_ladder:
+            self.get_ladder()
+
+        print(self.result)
+
+        response = (curnt_input.user + ' rolled' + self.label + ':\r\n'        
+            + ''.join(self.result['visual']) + ' =\r\n' + str(self.result['total']))
+
+        return response
+
 
 class Input:
     def __init__(self):
@@ -51,138 +186,25 @@ class Input:
 
         print(self.content_type, self.chat_type, self.chat_id)
 
-    ####################
-    ## Get Parameters ##
-    ####################
-    def get_params(self):
-        # Set defaults
-        self.parameters = {}
-        self.parameters['modifier'] = ''
-        self.parameters['label'] = ''
-        labelat = 2
-        
-        if self.content_list[0] == '/rf':
-            # Get parameters if provided
-            if len(self.content_list) >= 2:
-                try: 
-                    if isinstance(eval(self.content_list[1]), int):
-                        self.parameters['modifier'] = self.content_list[1]
-                        labelat = 2
-                except NameError:
-                    labelat = 1
+        if self.is_command:
+            self.process()
 
-            if len(self.content_list) >= (labelat + 1):
-                msg_begin, keyword, msg_end = self.content.partition(self.content_list[labelat])
-                self.parameters['label'] = ' ' + keyword + msg_end
-        elif len(self.content_list) >= 3:
-            self.parameters['label'] = ' ' + ' '.join(content_list(range(2,len(content_list))))
-        return 
-
-    ################
-    ##  Roll dice ##
-    ################
-    def roll(self):
-        self.get_params()
-        # Set equation to 4dF if /rf shortcut was usedd
-        if self.content_list[0] == '/rf':
-            if len(self.parameters['modifier']):
-                self.equation = '4dF+' + str(self.parameters['modifier'])
-            else:
-                self.equation = '4dF'
-        else: 
-            self.equation = self.content_list[1]
-
-        fate_options = { 
-            -1 : '[‒]', 
-            0  : '[  ]', 
-            1  : '[+]' 
-        }
-
-        result = []
-        self.fate_dice = []
-
-        print(self.equation)
-        # Break apart equation by operators
-        equation_list = re.findall(r'(\w+)([+*/-]?)', self.equation)
-        print(equation_list)
-        # Break apart each chunk of the equation by numbers and letters 
-        # if dice notation
-        for pair in equation_list:
-            for i in pair:
-                dice = re.search(r'(\d*)d([0-9fF]+)', str(i))
-                if dice:
-                    result.append(' (')
-                    # Set number of dice to roll
-                    if len(dice.group(1)):
-                        loop_num = eval(str(dice.group(1))) 
-                    else:
-                        loop_num = 1
-                    
-                    current_die_results = ''
-                    plus = ''
-                    # Roll dice
-                    while loop_num > 0:
-                        if dice.group(2) == 'f' or dice.group(2) == 'F':
-                            current_fate_die = random.choice(list(fate_options.keys()))
-                            current_die_results += plus + str(current_fate_die)
-                            self.fate_dice.append(fate_options[current_fate_die])
-                        else: 
-                            current_die_results += plus + str(random.randint(1,eval(dice.group(2))))
-                        if len(plus) is 0: # Adds all results to result unless it is the first one
-                            plus = ' + '
-                        loop_num -= 1
-                    
-                    result.append(current_die_results)
-                    result.append(')')
-                else:
-                    result.append(' ')
-                    result.append(i)
-
-        print(result)
-
-        if len(self.fate_dice):
-            self.fate_dice.append('\r\n')
-
-        return result
-
-    #####################
-    ## Process Message ##
-    #####################
+    ##################### Will be used later to determine where to send the content.
+    ## Process Message ## For example, if an NPC generator is included, the content 
+    ##################### would be sent to a different class than one to roll dice.
     def process(self):
 
-        dice_results = self.roll()
-        total = eval(str(''.join(dice_results)))
-
-        if len(self.fate_dice):
-            # Set if final result is positive or negative
-            if total > -1:
-                sign = '+'
-            else:
-                sign = ''
-
-            # Set ladder value for final result
-            if total < -2:
-                ladder_result = 'Beyond Terrible'
-            elif total > 8:
-                ladder_result = 'Beyond Legendary'
-            else:
-                ladder_result = ladder[total]
-
-            total = sign + str(total) + ' ' + ladder_result
-
-        response = (self.user + ' rolled' + self.parameters['label'] + ':\r\n'        
-            + ' '.join(self.fate_dice) + ''.join(dice_results) + 
-            ' =\r\n' + str(total))
+        curnt_dice.set_attrbs(self.content_list)
+        response = curnt_dice.roll()
 
         # Respond to user with results
         bot.sendMessage(self.chat_id, response)
 
-current_input = Input()
+curnt_input = Input()
+curnt_dice = Dice()
 
 def handle(msg):
-    current_input.set_attrbs(msg)
-    if current_input.is_command:
-        current_input.process()
+    curnt_input.set_attrbs(msg)
 
 TOKEN = sys.argv[1] # get token from command line
 
