@@ -48,7 +48,12 @@ class Dice:
                         labelat = 2
                 except NameError:
                     labelat = 1
-            self.equation = '4dF' + '+' + str(self.modifier)
+
+            if len(self.modifier):
+                self.equation = '4dF' + '+' + str(self.modifier)
+            else:
+                self.equation = '4dF'
+                
         else:
             self.equation = content_list[1]
 
