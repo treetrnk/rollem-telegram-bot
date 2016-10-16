@@ -25,7 +25,7 @@ ladder = {
 class Dice:
     def __init__(self):
         self.fate_options = { 
-            -1 : '[-]', 
+            -1 : '[\u2012]', 
             0  : '[  ]', 
             1  : '[+]' 
         }
