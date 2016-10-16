@@ -61,7 +61,7 @@ class Dice:
             msg_begin, keyword, msg_end = curnt_input.content.partition(self.content_list[labelat])
             self.label = ' ' + keyword + msg_end
 
-        print(self.equation)
+        print('New request: ' + self.equation)
             
         # Break apart equation by operators
         self.equation_list = re.findall(r'([(]?)(\w+)([+*/()-]*)', self.equation)
@@ -148,10 +148,10 @@ class Dice:
 
         self.result['total'] = eval(str(''.join(self.result['equation'])))
 
+        print(''.join(self.result['equation']) + ' = ' + str(self.result['total']))
+
         if use_ladder:
             self.get_ladder()
-
-        print(self.result)
 
         response = (curnt_input.user + ' rolled' + self.label + ':\r\n'        
             + ''.join(self.result['visual']) + ' =\r\n' + str(self.result['total']))
