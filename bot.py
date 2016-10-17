@@ -102,59 +102,65 @@ class Dice:
         space = ''
         isfate = False
         use_ladder = False
-        for pair in self.equation_list:
-            for i in pair:
-                dice = re.search(r'(\d*)d([0-9fF]+)', str(i))
-                if dice:
-                    self.result['visual'].append(space + '(')
-                    self.result['equation'].append('(')
-                    space = ' '
-                    # Set number of dice to roll
-                    if len(dice.group(1)):
-                        loop_num = eval(str(dice.group(1))) 
+
+        try: 
+            for pair in self.equation_list:
+                for i in pair:
+                    dice = re.search(r'(\d*)d([0-9fF]+)', str(i))
+                    if dice:
+                        self.result['visual'].append(space + '(')
+                        self.result['equation'].append('(')
+                        space = ' '
+                        # Set number of dice to roll
+                        if len(dice.group(1)):
+                            loop_num = eval(str(dice.group(1))) 
+                        else:
+                            loop_num = 1
+
+                        fate_dice = ''
+                        current_die_results = ''
+                        plus = ''
+                        
+                        # Roll dice
+                        while loop_num > 0:
+                            if dice.group(2) == 'f' or dice.group(2) == 'F':
+                                isfate = True
+                                current_fate_die = random.choice(list(self.fate_options.keys()))
+                                current_die_results += plus + str(current_fate_die)
+                                fate_dice += self.fate_options[current_fate_die] + ' '
+                            else: 
+                                current_die_results += plus + str(random.randint(1,eval(dice.group(2))))
+                            if len(plus) is 0: # Adds all results to result unless it is the first one
+                                plus = ' + '
+                            loop_num -= 1
+                        
+                        if isfate:
+                            isfate = False
+                            use_ladder = True
+                            self.result['visual'].append(' ' + fate_dice)
+                        else:
+                            self.result['visual'].append(current_die_results)
+                        self.result['equation'].append(current_die_results)
+                        self.result['visual'].append(')')
+                        self.result['equation'].append(')')
                     else:
-                        loop_num = 1
+                        self.result['visual'].append(' ')
+                        self.result['visual'].append(i)
+                        self.result['equation'].append(i)
 
-                    fate_dice = ''
-                    current_die_results = ''
-                    plus = ''
-                    
-                    # Roll dice
-                    while loop_num > 0:
-                        if dice.group(2) == 'f' or dice.group(2) == 'F':
-                            isfate = True
-                            current_fate_die = random.choice(list(self.fate_options.keys()))
-                            current_die_results += plus + str(current_fate_die)
-                            fate_dice += self.fate_options[current_fate_die] + ' '
-                        else: 
-                            current_die_results += plus + str(random.randint(1,eval(dice.group(2))))
-                        if len(plus) is 0: # Adds all results to result unless it is the first one
-                            plus = ' + '
-                        loop_num -= 1
-                    
-                    if isfate:
-                        isfate = False
-                        use_ladder = True
-                        self.result['visual'].append(' ' + fate_dice)
-                    else:
-                        self.result['visual'].append(current_die_results)
-                    self.result['equation'].append(current_die_results)
-                    self.result['visual'].append(')')
-                    self.result['equation'].append(')')
-                else:
-                    self.result['visual'].append(' ')
-                    self.result['visual'].append(i)
-                    self.result['equation'].append(i)
+            self.result['total'] = eval(str(''.join(self.result['equation'])))
 
-        self.result['total'] = eval(str(''.join(self.result['equation'])))
+            print(''.join(self.result['equation']) + ' = ' + str(self.result['total']))
 
-        print(''.join(self.result['equation']) + ' = ' + str(self.result['total']))
+            if use_ladder:
+                self.get_ladder()
 
-        if use_ladder:
-            self.get_ladder()
+            response = (curnt_input.user + ' rolled' + self.label + ':\r\n'        
+                + ''.join(self.result['visual']) + ' =\r\n' + str(self.result['total']))
 
-        response = (curnt_input.user + ' rolled' + self.label + ':\r\n'        
-            + ''.join(self.result['visual']) + ' =\r\n' + str(self.result['total']))
+        except Exception:
+            response = (curnt_input.user + ': Invalid equation!\r\n' +
+                'Please use dice notation. For example: 3d6, or 1d20+5, or d12')
 
         return response
 
