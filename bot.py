@@ -155,12 +155,13 @@ class Dice:
             if use_ladder:
                 self.get_ladder()
 
-            response = (curnt_input.user + ' rolled' + self.label + ':\r\n'        
-                + ''.join(self.result['visual']) + ' =\r\n' + str(self.result['total']))
+            response = (curnt_input.user + ' rolled<b>' + self.label + '</b>:\r\n'        
+                + ''.join(self.result['visual']) + ' =\r\n<b>' + str(self.result['total']) + '</b>')
 
         except Exception:
-            response = (curnt_input.user + ': Invalid equation!\r\n' +
-                'Please use dice notation. For example: 3d6, or 1d20+5, or d12')
+            response = (curnt_input.user + ': <b>Invalid equation!</b>\r\n' +
+                'Please use <a href="https://en.wikipedia.org/wiki/Dice_notation">dice notation</a>.\r\n' +
+                'For example: <code>3d6</code>, or <code>1d20+5</code>, or <code>d12</code>')
 
         return response
 
@@ -209,7 +210,7 @@ class Input:
         response = curnt_dice.roll()
 
         # Respond to user with results
-        bot.sendMessage(self.chat_id, response)
+        bot.sendMessage(self.chat_id, response, 'HTML', True)
 
 curnt_input = Input()
 curnt_dice = Dice()
