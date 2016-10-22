@@ -64,7 +64,8 @@ class Dice:
         print('New request: ' + self.equation)
             
         # Break apart equation by operators
-        self.equation_list = re.findall(r'([(]?)(\w+)([+*/()-]*)', self.equation)
+        #self.equation_list = re.findall(r'([(]?)(\w+)([+*/()-]*)', self.equation)
+        self.equation_list = re.findall(r'([(]?)(\w+!?>?\d*)([+*/()-]*)', self.equation)
 
     ##################
     ##  Get ladder  ##
@@ -102,26 +103,27 @@ class Dice:
         space = ''
         isfate = False
         use_ladder = False
-        min_explosion = -1
-        die_sides = 0
-        explodes = True
 
-        try: 
+        try:
             for pair in self.equation_list:
                 for i in pair:
+                    min_explosion = -1
+                    explodes = False
                     dice = re.search(r'(\d*)d([0-9fF]+)(!>[0-9]+|!)?', str(i))
                     #Check if explosion is valid
-                    if dice.group(3):
-                        die_sides = dice.group(2)
-                        if len(dice.group(3) > 1):
-                            num = int(dice.group(3)[2:])
-                            if num > die_sides:
-                                raise Exception('Explosion minimum value must be lower or equal to the die\'s sides number!')
-                            else:
-                                min_explosion = num
-                        else:
-                            min_explosion = die_sides
                     if dice:
+                        if dice.group(3):
+                            explodes = True
+                            die_sides = eval(dice.group(2))
+                            if len(dice.group(3)) > 1:
+                                num = int(dice.group(3)[2:]) + 1
+                                if num > die_sides:
+                                    raise Exception(
+                                        'Explosion minimum value must be lower or equal to the die\'s sides number!')
+                                else:
+                                    min_explosion = num
+                            else:
+                                min_explosion = die_sides
                         self.result['visual'].append(space + '(')
                         self.result['equation'].append('(')
                         space = ' '
@@ -145,7 +147,7 @@ class Dice:
                             else:
                                 last_roll = random.randint(1,eval(dice.group(2)))
                                 current_die_results += plus + str(last_roll)
-                                if explodes and last_roll >= min_explosion:
+                                if explodes and (last_roll >= min_explosion):
                                     loop_num += 1
                             if len(plus) is 0: # Adds all results to result unless it is the first one
                                 plus = ' + '
@@ -214,7 +216,6 @@ class Input:
                 self.is_command = True
 
         print(self.content_type, self.chat_type, self.chat_id)
-
         if self.is_command:
             self.process()
 
