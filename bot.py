@@ -112,7 +112,7 @@ class Dice:
                     dice = re.search(r'(\d*)d([0-9fF]+)(!>[0-9]+|!)?', str(i))
                     #Check if explosion is valid
                     if dice:
-                        if dice.group(3):
+                        if dice.group(3) and eval(dice.group(2)) >= 2:
                             explodes = True
                             die_sides = eval(dice.group(2))
                             if len(dice.group(3)) > 1:
