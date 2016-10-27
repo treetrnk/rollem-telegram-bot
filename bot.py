@@ -112,6 +112,8 @@ class Dice:
                     dice = re.search(r'(\d*)d([0-9fF]+)(!>[0-9]+|!)?', str(i))
                     #Check if explosion is valid
                     if dice:
+                        if eval(dice.group(1)) > 1000:
+                            raise Exception('Maximum number of rollable dice is 100')
                         if dice.group(3) and eval(dice.group(2)) >= 2:
                             explodes = True
                             die_sides = eval(dice.group(2))
