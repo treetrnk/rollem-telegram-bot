@@ -176,8 +176,13 @@ class Dice:
             if use_ladder:
                 self.get_ladder()
 
+            # Only show part of visual equation if bigger than 300 characters
+            self.result['visual'] = ''.join(self.result['visual'])
+            if len(self.result['visual']) > 275:
+                self.result['visual'] = self.result['visual'][0:275] + ' . . . )'
+
             response = (curnt_input.user + ' rolled<b>' + self.label + '</b>:\r\n'        
-                + ''.join(self.result['visual']) + ' =\r\n<b>' + str(self.result['total']) + '</b>')
+                + self.result['visual'] + ' =\r\n<b>' + str(self.result['total']) + '</b>')
 
         except Exception:
             response = (curnt_input.user + ': <b>Invalid equation!</b>\r\n' +
