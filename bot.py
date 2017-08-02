@@ -4,6 +4,8 @@ import time
 import telepot
 import random
 import re
+import traceback
+from datetime import datetime
 
 ladder = {
     8  : 'Legendary',
@@ -25,7 +27,7 @@ ladder = {
 class Dice:
     def __init__(self):
         self.fate_options = { 
-            -1 : '[\u2012]', 
+            -1 : '[-]', 
             0  : '[  ]', 
             1  : '[+]' 
         }
@@ -103,6 +105,7 @@ class Dice:
         space = ''
         isfate = False
         use_ladder = False
+        logfile = open("roll.log", "a")
 
         try:
             for pair in self.equation_list:
@@ -183,11 +186,18 @@ class Dice:
 
             response = (curnt_input.user + ' rolled<b>' + self.label + '</b>:\r\n'        
                 + self.result['visual'] + ' =\r\n<b>' + str(self.result['total']) + '</b>')
+            error = ''
 
         except Exception:
             response = (curnt_input.user + ': <b>Invalid equation!</b>\r\n' +
                 'Please use <a href="https://en.wikipedia.org/wiki/Dice_notation">dice notation</a>.\r\n' +
                 'For example: <code>3d6</code>, or <code>1d20+5</code>, or <code>d12</code>')
+            error = traceback.format_exc().replace('\r', '').replace('\n', '; ')
+
+        logfile.write('\r\n\r\n' + str(datetime.now()) + '======================================\r\n')
+        logfile.write('\tRESPONSE: ' + response.replace('\r', ' ').replace('\n', '') + '\r\n')
+        if len(error):
+            logfile.write('\tERROR: ' + error + '\r\n')
 
         return response
 
@@ -214,6 +224,8 @@ class Input:
         else:
             self.user = msg['from']['first_name'] 
 
+        logfile = open("roll.log", "a")
+
         #Get command
         self.is_command = False
         if self.content_type == 'text':
@@ -225,6 +237,10 @@ class Input:
         print(self.content_type, self.chat_type, self.chat_id)
         if self.is_command:
             self.process()
+        else:
+            logfile.write('\r\n\r\n' + str(datetime.now()) + '======================================\r\n')
+
+        logfile.write('\tREQUEST: ' + str(msg) + '\r\n')
 
     ##################### Will be used later to determine where to send the content.
     ## Process Message ## For example, if an NPC generator is included, the content 
