@@ -18,3 +18,7 @@ A polyhedral dice rolling bot for [Telegram](https://telegram.org). To use this 
 * Dice macros
 * NPC name generator (maybe?)
 * Aspect generator (maybe?)
+
+## Support
+
+If you like this bot and want to show your apprectiation, you can [send donations here](https://www.paypal.me/treetrnk).
