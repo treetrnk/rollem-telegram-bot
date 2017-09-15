@@ -21,4 +21,4 @@ A polyhedral dice rolling bot for [Telegram](https://telegram.org). To use this 
 
 ## Support
 
-If you like this bot and want to show your apprectiation, you can [send donations here](https://www.paypal.me/treetrnk).
+If you like this bot and want to show your apprectiation support its development, you can [send donations here](https://www.paypal.me/treetrnk).
