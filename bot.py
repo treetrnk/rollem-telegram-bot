@@ -6,6 +6,7 @@ import random
 import re
 import traceback
 from datetime import datetime
+from ast import literal_eval
 
 ladder = {
     8  : 'Legendary',
@@ -45,7 +46,7 @@ class Dice:
         if self.content_list[0] == '/rf':
             if len(self.content_list) >= 2:
                 try:
-                    if isinstance(eval(self.content_list[1]), int):
+                    if isinstance(int(self.content_list[1]), int):
                         self.modifier = self.content_list[1]
                         labelat = 2
                 except NameError:
@@ -115,11 +116,11 @@ class Dice:
                     dice = re.search(r'(\d*)d([0-9fF]+)(!>[0-9]+|!)?', str(i))
                     #Check if explosion is valid
                     if dice:
-                        if eval(dice.group(1)) > 1000:
+                        if int(dice.group(1)) > 1000:
                             raise Exception('Maximum number of rollable dice is 100')
-                        if dice.group(3) and eval(dice.group(2)) >= 2:
+                        if dice.group(3) and int(dice.group(2)) >= 2:
                             explodes = True
-                            die_sides = eval(dice.group(2))
+                            die_sides = int(dice.group(2))
                             if len(dice.group(3)) > 1:
                                 num = int(dice.group(3)[2:]) + 1
                                 if num > die_sides:
@@ -134,7 +135,7 @@ class Dice:
                         space = ' '
                         # Set number of dice to roll
                         if len(dice.group(1)):
-                            loop_num = eval(str(dice.group(1))) 
+                            loop_num = int(dice.group(1)) 
                         else:
                             loop_num = 1
 
@@ -150,7 +151,7 @@ class Dice:
                                 current_die_results += plus + str(current_fate_die)
                                 fate_dice += self.fate_options[current_fate_die] + ' '
                             else:
-                                last_roll = random.randint(1,eval(dice.group(2)))
+                                last_roll = random.randint(1,int(dice.group(2)))
                                 current_die_results += plus + str(last_roll)
                                 if explodes and (last_roll >= min_explosion):
                                     loop_num += 1
@@ -172,7 +173,7 @@ class Dice:
                         self.result['visual'].append(i)
                         self.result['equation'].append(i)
 
-            self.result['total'] = eval(str(''.join(self.result['equation'])))
+            self.result['total'] = literal_eval(str(''.join(self.result['equation'])))
 
             print(''.join(self.result['equation']) + ' = ' + str(self.result['total']))
 
