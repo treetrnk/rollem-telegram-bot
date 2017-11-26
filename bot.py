@@ -67,7 +67,7 @@ class Dice:
             
         # Break apart equation by operators
         #self.equation_list = re.findall(r'([(]?)(\w+)([+*/()-]*)', self.equation)
-        self.equation_list = re.findall(r'([(]?)(\w+!?>?\d*)([+*/()-]*)', self.equation)
+        self.equation_list = re.findall(r'([(]?)(\w+!?>?\d*)([+*/()-]?)', self.equation)
 
     ##################
     ##  Get ladder  ##
@@ -188,10 +188,11 @@ class Dice:
                 + self.result['visual'] + ' =\r\n<b>' + str(self.result['total']) + '</b>')
             error = ''
 
-        except Exception:
+        except e:
             response = (curnt_input.user + ': <b>Invalid equation!</b>\r\n' +
                 'Please use <a href="https://en.wikipedia.org/wiki/Dice_notation">dice notation</a>.\r\n' +
                 'For example: <code>3d6</code>, or <code>1d20+5</code>, or <code>d12</code>')
+            print(response)
             error = traceback.format_exc().replace('\r', '').replace('\n', '; ')
 
         logfile.write('\r\n\r\n' + str(datetime.now()) + '======================================\r\n')
