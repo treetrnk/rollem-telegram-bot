@@ -68,7 +68,7 @@ class Dice:
             
         # Break apart equation by operators
         #self.equation_list = re.findall(r'([(]?)(\w+)([+*/()-]*)', self.equation)
-        self.equation_list = re.findall(r'([(]?)((?!.*help)\w+!?>?\d*)([+*/()-]?)', self.equation)
+        self.equation_list = re.findall(r'([(]?)(\w+!?>?\d*)([+*/()-]?)', self.equation)
 
     ##################
     ##  Get ladder  ##
@@ -116,7 +116,13 @@ class Dice:
                     dice = re.search(r'(\d*)d([0-9fF]+)(!>[0-9]+|!)?', str(i))
                     #Check if explosion is valid
                     if dice:
-                        if int(dice.group(1)) > 1000:
+                        # Set number of dice to roll
+                        if len(dice.group(1)):
+                            loop_num = int(dice.group(1)) 
+                        else:
+                            loop_num = 1
+
+                        if loop_num > 1000:
                             raise Exception('Maximum number of rollable dice is 100')
                         if dice.group(3) and int(dice.group(2)) >= 2:
                             explodes = True
@@ -133,12 +139,6 @@ class Dice:
                         self.result['visual'].append(space + '(')
                         self.result['equation'].append('(')
                         space = ' '
-                        # Set number of dice to roll
-                        if len(dice.group(1)):
-                            loop_num = int(dice.group(1)) 
-                        else:
-                            loop_num = 1
-
                         fate_dice = ''
                         current_die_results = ''
                         plus = ''
@@ -189,10 +189,11 @@ class Dice:
                 + self.result['visual'] + ' =\r\n<b>' + str(self.result['total']) + '</b>')
             error = ''
 
-        except Exception:
+        except Exception as e:
             response = (curnt_input.user + ': <b>Invalid equation!</b>\r\n' +
                 'Please use <a href="https://en.wikipedia.org/wiki/Dice_notation">dice notation</a>.\r\n' +
                 'For example: <code>3d6</code>, or <code>1d20+5</code>, or <code>d12</code>')
+            print(e)
             print(response)
             error = traceback.format_exc().replace('\r', '').replace('\n', '; ')
 
