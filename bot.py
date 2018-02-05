@@ -66,9 +66,9 @@ class Dice:
             print(curnt_input.content)
             msg_begin, keyword, msg_end = curnt_input.content.partition(self.content_list[labelat])
             self.label = ' ' + str(
-                    unicodedata.normalize('NFKD', keyword).encode('ascii','ignore').decode()
+                    keyword.encode('utf-8').decode()
                 )  + str(
-                    unicodedata.normalize('NFKD', msg_end).encode('ascii','ignore').decode()
+                    msg_end.encode('utf-8').decode()
                 )
             print(self.label)
 
