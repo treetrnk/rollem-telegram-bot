@@ -5,6 +5,8 @@ import telepot
 import random
 import re
 import traceback
+import unicodedata
+from codecs import encode,decode
 from datetime import datetime
 from ast import literal_eval
 
@@ -61,8 +63,14 @@ class Dice:
             self.equation = content_list[1]
 
         if len(self.content_list) >= (labelat + 1):
+            print(curnt_input.content)
             msg_begin, keyword, msg_end = curnt_input.content.partition(self.content_list[labelat])
-            self.label = ' ' + keyword + msg_end
+            self.label = ' ' + str(
+                    unicodedata.normalize('NFKD', keyword).encode('ascii','ignore').decode()
+                )  + str(
+                    unicodedata.normalize('NFKD', msg_end).encode('ascii','ignore').decode()
+                )
+            print(self.label)
 
         print('New request: ' + self.equation)
             
@@ -113,7 +121,7 @@ class Dice:
                 for i in pair:
                     min_explosion = -1
                     explodes = False
-                    dice = re.search(r'(\d*)d([0-9fF]+)(!>[0-9]+|!)?', str(i))
+                    dice = re.search(r'(\d*)d([0-9fF]+)(!>[0-9]+|!)?', (i))
                     #Check if explosion is valid
                     if dice:
                         # Set number of dice to roll
