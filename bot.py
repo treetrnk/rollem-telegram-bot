@@ -100,12 +100,6 @@ class Dice:
 
         self.result['total'] = sign + str(self.result['total']) + ' ' + ladder_result
 
-    ###################
-    ##  Get equation ##
-    ###################
-    def get_equation(self):
-        return self.equation
-
     ################
     ##  Roll dice ##
     ################
@@ -290,7 +284,7 @@ class Input:
 
         # Respond to user with results
         if self.flavor == 'inline_query':
-            description = 'Roll ' + curnt_dice.get_equation()
+            description = 'Roll ' + self.content_list[1]
             articles = [
                 InlineQueryResultArticle(
                     id='roll',
