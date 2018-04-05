@@ -303,7 +303,7 @@ class Input:
                     )
                )
             ]
-            bot.answerInlineQuery(self.query_id, articles)
+            bot.answerInlineQuery(self.query_id, articles, cache_time=0)
         else:
             bot.sendMessage(self.chat_id, response, 'HTML', True)
 
