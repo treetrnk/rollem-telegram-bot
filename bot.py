@@ -2,6 +2,8 @@
 import sys
 import time
 import telepot
+from telepot.loop import MessageLoop
+from telepot.namedtuple import InlineQueryResultArticle, InputTextMessageContent
 import random
 import re
 import traceback
@@ -98,6 +100,12 @@ class Dice:
 
         self.result['total'] = sign + str(self.result['total']) + ' ' + ladder_result
 
+    ###################
+    ##  Get equation ##
+    ###################
+    def get_equation(self):
+        return self.equation
+
     ################
     ##  Roll dice ##
     ################
@@ -193,7 +201,7 @@ class Dice:
             if len(self.result['visual']) > 275:
                 self.result['visual'] = self.result['visual'][0:275] + ' . . . )'
 
-            response = (curnt_input.user + ' rolled<b>' + self.label + '</b>:\r\n'        
+            response = (curnt_input.user + ' rolled<b>' + (self.label or (' ' + self.equation)) + '</b>:\r\n'
                 + self.result['visual'] + ' =\r\n<b>' + str(self.result['total']) + '</b>')
             error = ''
 
@@ -226,10 +234,10 @@ class Input:
     ####################
     ## Set Attributes ##
     ####################
-    def set_attrbs(self, msg):
+    def set_attrbs(self, msg, flavor):
         self.isset = True
         self.msg = msg
-        self.content_type, self.chat_type, self.chat_id = telepot.glance(msg)
+        self.flavor = flavor
         if 'username' in msg['from'].keys():
             self.user = msg['from']['username']
         else:
@@ -238,6 +246,20 @@ class Input:
         logfile = open("roll.log", "a")
 
         #Get command
+        if self.flavor == 'inline_query':
+            self.set_for_inline_query(msg)
+        else:
+            self.set_for_chat(msg)
+
+        if self.is_command:
+            self.process()
+        else:
+            logfile.write('\r\n\r\n' + str(datetime.now()) + '======================================\r\n')
+
+        logfile.write('\tREQUEST: ' + str(msg) + '\r\n')
+
+    def set_for_chat(self, msg):
+        self.content_type, self.chat_type, self.chat_id = telepot.glance(msg, flavor=self.flavor)
         self.is_command = False
         if self.content_type == 'text':
             self.content = msg['text']
@@ -246,12 +268,17 @@ class Input:
                 self.is_command = True
 
         print(self.content_type, self.chat_type, self.chat_id)
-        if self.is_command:
-            self.process()
-        else:
-            logfile.write('\r\n\r\n' + str(datetime.now()) + '======================================\r\n')
 
-        logfile.write('\tREQUEST: ' + str(msg) + '\r\n')
+    def set_for_inline_query(self, msg):
+        self.query_id, self.from_id, self.query_string = telepot.glance(msg, flavor=self.flavor)
+
+        #Get command
+        self.is_command = False
+        if len(self.query_string) > 0:
+            self.content = self.query_string
+            self.content_list = self.content.split()
+            self.content_list = ['/r'] + self.content_list
+            self.is_command = True
 
     ##################### Will be used later to determine where to send the content.
     ## Process Message ## For example, if an NPC generator is included, the content 
@@ -262,18 +289,40 @@ class Input:
         response = curnt_dice.roll()
 
         # Respond to user with results
-        bot.sendMessage(self.chat_id, response, 'HTML', True)
+        if self.flavor == 'inline_query':
+            description = 'Roll ' + curnt_dice.get_equation()
+            articles = [
+                InlineQueryResultArticle(
+                    id='roll',
+                    title='Roll',
+                    description=description,
+                    input_message_content=InputTextMessageContent(
+                        message_text=response,
+                        parse_mode='HTML',
+                        disable_web_page_preview=True
+                    )
+               )
+            ]
+            bot.answerInlineQuery(self.query_id, articles)
+        else:
+            bot.sendMessage(self.chat_id, response, 'HTML', True)
 
 curnt_input = Input()
 curnt_dice = Dice()
 
-def handle(msg):
-    curnt_input.set_attrbs(msg)
+def on_chat_message(msg):
+    curnt_input.set_attrbs(msg, 'chat')
+
+def on_inline_query(msg):
+    curnt_input.set_attrbs(msg, 'inline_query')
 
 TOKEN = sys.argv[1] # get token from command line
 
 bot = telepot.Bot(TOKEN)
-bot.message_loop(handle)
+MessageLoop(bot, {
+    'chat': on_chat_message,
+    'inline_query': on_inline_query
+}).run_as_thread()
 print ('Listening...')
 
 # Keep the program running
