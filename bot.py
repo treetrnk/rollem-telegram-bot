@@ -23,6 +23,7 @@ ladder = {
     -1 : 'Poor',
     -2 : 'Terrible'
 }
+
       ##########################################
 ######## Used for any commands that roll dice ########
 ########  CMDs: /roll, /r, /rf                ########
@@ -181,7 +182,11 @@ class Dice:
                         self.result['visual'].append(i)
                         self.result['equation'].append(i)
 
-            self.result['total'] = literal_eval(str(''.join(self.result['equation'])))
+            self.result['total'] = str(''.join(self.result['equation'])).replace(" ","").replace('(','').replace(')','')
+            if bool(re.match('^[0-9+*/ ()-]+$', self.result['total'])):
+                self.result['total'] = eval(self.result['total'])
+            else:
+                raise Exception('Request was not a valid equation!')
 
             print(''.join(self.result['equation']) + ' = ' + str(self.result['total']))
 
