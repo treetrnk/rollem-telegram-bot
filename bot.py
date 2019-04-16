@@ -198,7 +198,7 @@ class Dice:
             if len(self.result['visual']) > 275:
                 self.result['visual'] = self.result['visual'][0:275] + ' . . . )'
 
-            response = (curnt_input.user + ' rolled<b>' + self.label + '</b>:\r\n'        
+            response = ('@' + curnt_input.user + ' rolled<b>' + self.label + '</b>:\r\n'        
                 + self.result['visual'] + ' =\r\n<b>' + str(self.result['total']) + '</b>')
             error = ''
 
