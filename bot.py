@@ -49,6 +49,7 @@ def rf(bot, update, args):
 
 
 def roll(bot, update, args):
+    username = update.message.from_user.username if update.message.from_user.username else update.message.from_user.first_name
     equation = args[0].strip() if len(args) > 0 else False
     equation_list = re.findall(r'(\w+!?>?\d*)([+*/()-]?)', equation)
     comment = ' ' + args[1] if len(args) > 1 else ''
@@ -126,12 +127,11 @@ def roll(bot, update, args):
         if len(result['visual']) > 275:
             result['visual'] = result['visual'][0:275] + ' . . . )'
 
-        response = ('Rolled<b>' + comment + '</b>:\r\n'        
-            + result['visual'] + ' =\r\n<b>' + str(result['total']) + '</b>')
+        response = (f'{username} rolled<b>{comment}</b>:\r\n {result["visual"]} =\r\n<b>{str(result["total"])}</b>')
         error = ''
 
     except Exception as e:
-        response = ('<b>Invalid equation!</b>\r\n' +
+        response = (f'{username}: <b>Invalid equation!</b>\r\n' +
             'Please use <a href="https://en.wikipedia.org/wiki/Dice_notation">dice notation</a>.\r\n' +
             'For example: <code>3d6</code>, or <code>1d20+5</code>, or <code>d12</code>\r\n\r\n' +
             'For more information, type <code>/help</code>'
