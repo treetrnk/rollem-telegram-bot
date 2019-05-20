@@ -1,14 +1,15 @@
 #!/bin/python
 import sys
 import time
-import telepot
 import random
 import re
+import logging
 import traceback
 import unicodedata
 from codecs import encode,decode
 from datetime import datetime
 from ast import literal_eval
+from telegram.ext import Updater, CommandHandler
 
 ladder = {
     8  : 'Legendary',
@@ -29,8 +30,7 @@ ladder = {
 ########  CMDs: /roll, /r, /rf                ########
       ##########################################
 class Dice:
-    def __init__(self):
-        self.fate_options = { 
+        fate_options = { 
             -1 : '[-]', 
             0  : '[  ]', 
             1  : '[+]' 
@@ -318,3 +318,23 @@ print ('Listening...')
 # Keep the program running
 while 1:
     time.sleep(10)
+
+
+def roll(bot, update):
+    bot.send_message(chat_id=update.message.chat_id, text="Technical difficulties. Working on a fix now!")
+
+TOKEN = sys.argv[1]
+
+updater = Updater(token=TOKEN)
+dispatcher = updater.dispatcher
+
+roll_handler = CommandHandler(['roll','rf','r'], roll)
+dispatcher.add_handler(roll_handler)
+
+help_handler = CommandHandler('help', help)
+dispatcher.add_handler(help_handler)
+
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+         level=logging.INFO)
+
+updater.start_polling()
