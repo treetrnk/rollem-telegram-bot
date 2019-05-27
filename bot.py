@@ -52,7 +52,7 @@ def roll(bot, update, args):
     username = update.message.from_user.username if update.message.from_user.username else update.message.from_user.first_name
     equation = args[0].strip() if len(args) > 0 else False
     equation_list = re.findall(r'(\w+!?>?\d*)([+*/()-]?)', equation)
-    comment = ' ' + args[1] if len(args) > 1 else ''
+    comment = ' ' + ' '.join(args[1:]) if len(args) > 1 else ''
     space = ''
     is_fate = False
     use_ladder = False
