@@ -64,7 +64,7 @@ def roll(bot, update, args):
 
     try:
         for pair in equation_list:
-            print(f"pair: {pair}")
+            #print(f"pair: {pair}")
             for item in pair:
                 if item and len(item) > 1 and 'd' in item:
                     dice = re.search(r'(\d*)d([0-9fF]+)(!)?', item)
@@ -110,7 +110,6 @@ def roll(bot, update, args):
                         result['equation'].append(item)
 
         result['total'] = str(''.join(result['equation'])).replace(" ","")
-        print(f"Total: {str(result['total'])}")
         if bool(re.match('^[0-9+*/ ()-]+$', result['total'])):
             result['total'] = eval(result['total'])
         else:
