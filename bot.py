@@ -78,7 +78,7 @@ def roll(bot, update, args):
                     fate_dice = ''
                     current_die_results = ''
                     plus = ''
-                    explode = True if dice.group(3) == '!' else False
+                    explode = True if dice.group(3) == '!' and int(dice.group(2)) > 1 else False
 
                     while dice_num > 0:
                         if sides in ['f','F']:
