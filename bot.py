@@ -70,7 +70,7 @@ def roll(bot, update, args):
                     dice = re.search(r'(\d*)d([0-9fF]+)(!)?', item)
                     dice_num = int(dice.group(1)) if dice.group(1) else 1
                     if dice_num > 1000:
-                        raise Exception('Maximum number of rollable dice is 100')
+                        raise Exception('Maximum number of rollable dice is 1000')
                     sides = dice.group(2)
                     space = ' '
                     result['visual'].append(space + '(')
