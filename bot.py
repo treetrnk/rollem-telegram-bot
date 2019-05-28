@@ -115,7 +115,7 @@ def roll(bot, update, args):
         else:
             raise Exception('Request was not a valid equation!')
 
-        print(''.join(result['equation']) + ' = ' + str(result['total']))
+        print(' '.join(args) + ' = ' + ''.join(result['equation']) + ' = ' + str(result['total']))
 
         if use_ladder:
             # Set if final result is positive or negative
