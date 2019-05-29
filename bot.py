@@ -54,6 +54,7 @@ def roll(bot, update, args):
     equation_list = re.findall(r'(\w+!?>?\d*)([+*/()-]?)', equation)
     comment = ' ' + ' '.join(args[1:]) if len(args) > 1 else ''
     space = ''
+    dice_num = None
     is_fate = False
     use_ladder = False
     result = {
@@ -132,10 +133,12 @@ def roll(bot, update, args):
         error = ''
 
     except Exception as e:
-        response = (f'{username}: <b>Invalid equation!</b>\r\n' +
-            'Please use <a href="https://en.wikipedia.org/wiki/Dice_notation">dice notation</a>.\r\n' +
-            'For example: <code>3d6</code>, or <code>1d20+5</code>, or <code>d12</code>\r\n\r\n' +
-            'For more information, type <code>/help</code>'
+        response = f'{username}: <b>Invalid equation!</b>\r\n'
+        if dice_num and dice_num > 1000:
+            response += str(e) + '.\r\n'
+        response += ('Please use <a href="https://en.wikipedia.org/wiki/Dice_notation">dice notation</a>.\r\n' +
+                'For example: <code>3d6</code>, or <code>1d20+5</code>, or <code>d12</code>\r\n\r\n' +
+                'For more information, type <code>/help</code>'
             )
         print(e)
         print(response)
