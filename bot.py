@@ -177,8 +177,9 @@ def help(bot, update):
         "check out some of my other projects, take a look at the links "
         "below.\r\n"
         " - <a href='https://github.com/treetrnk'>Github</a>\r\n"
+        " - <a href='https://houstonhare.com/stories/sprig'>Sprig: A fantasy story with RPG elements</a>\r\n"
         " - <a href='https://rpg.nathanhare.net'>Blog about Fate Core and other RPGs</a>\r\n"
-        " - <a href='https://nathanhare.net'>Portfolio</a>\r\n"
+        #" - <a href='https://nathanhare.net'>Portfolio</a>\r\n"
         " - <a href='https://www.drivethrurpg.com/browse/pub/10796/Nathan-Hare'>DriveThruRPG Webstore</a>\r\n"
         " - <a href='https://paypal.me/treetrnk'>Paypal</a>"
     )
