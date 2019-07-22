@@ -176,14 +176,14 @@ def help(bot, update):
         "would like to say thanks, support further development, or "
         "check out some of my other projects, take a look at the links "
         "below.\r\n"
-        " - <a href='https://github.com/treetrnk'>Github</a>\r\n"
-        " - <a href='https://houstonhare.com/stories/sprig'>Sprig: A fantasy story with RPG elements</a>\r\n"
+        " - <a href='https://houstonhare.com/stories/sprig'>Sprig: A fantasy web story with RPG elements</a>\r\n"
         " - <a href='https://rpg.nathanhare.net'>Blog about Fate Core and other RPGs</a>\r\n"
         #" - <a href='https://nathanhare.net'>Portfolio</a>\r\n"
         " - <a href='https://www.drivethrurpg.com/browse/pub/10796/Nathan-Hare'>DriveThruRPG Webstore</a>\r\n"
-        " - <a href='https://paypal.me/treetrnk'>Paypal</a>"
+        " - <a href='https://paypal.me/treetrnk'>Paypal</a>\r\n"
+        " - <a href='https://github.com/treetrnk'>Github</a>"
     )
-    bot.send_message(chat_id=update.message.chat_id, text=response, parse_mode=ParseMode.HTML)
+    bot.send_message(chat_id=update.message.chat_id, text=response, parse_mode=ParseMode.HTML, disable_web_page_preview=True)
     
 
 TOKEN = sys.argv[1]
