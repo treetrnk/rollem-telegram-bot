@@ -183,6 +183,7 @@ def help(bot, update):
         " - <a href='https://paypal.me/treetrnk'>Paypal</a>\r\n"
         " - <a href='https://github.com/treetrnk'>Github</a>"
     )
+    print('help')
     bot.send_message(chat_id=update.message.chat_id, text=response, parse_mode=ParseMode.HTML, disable_web_page_preview=True)
     
 
