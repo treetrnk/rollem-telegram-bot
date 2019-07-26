@@ -129,11 +129,11 @@ def roll(bot, update, args):
         if len(result['visual']) > 275:
             result['visual'] = result['visual'][0:275] + ' . . . )'
 
-        response = (f'{username} rolled<b>{comment}</b>:\r\n {result["visual"]} =\r\n<b>{str(result["total"])}</b>')
+        response = (f'@{username} rolled<b>{comment}</b>:\r\n {result["visual"]} =\r\n<b>{str(result["total"])}</b>')
         error = ''
 
     except Exception as e:
-        response = f'{username}: <b>Invalid equation!</b>\r\n'
+        response = f'@{username}: <b>Invalid equation!</b>\r\n'
         if dice_num and dice_num > 1000:
             response += str(e) + '.\r\n'
         response += ('Please use <a href="https://en.wikipedia.org/wiki/Dice_notation">dice notation</a>.\r\n' +
