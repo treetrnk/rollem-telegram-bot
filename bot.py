@@ -94,7 +94,7 @@ def roll(bot, update, args):
                             current_die_results += plus + str(last_roll)
                         if not (explode and last_roll == sides):
                             dice_num -= 1
-                        if len(plus) is 0: # Adds all results to result unless it is the first one
+                        if len(plus) == 0: # Adds all results to result unless it is the first one
                             plus = ' + '
                     if is_fate:
                         is_fate = False
