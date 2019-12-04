@@ -22,3 +22,7 @@ A polyhedral dice rolling bot for [Telegram](https://telegram.org). To use this 
 ## Support
 
 If you like this bot and want to show your apprectiation support its development, you can [send donations here](https://www.paypal.me/treetrnk).
+
+## Troubleshooting
+
+If you are receiving an error that says `Server response could not be decoded using UTF-8`, make the following changes to the python-telegram-bot requests.py file: [Bug Fix Diff](https://github.com/python-telegram-bot/python-telegram-bot/pull/1623/files)
