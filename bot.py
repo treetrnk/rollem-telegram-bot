@@ -6,8 +6,8 @@ import random
 import traceback
 import unicodedata
 import logging
-from telegram import ParseMode
-from telegram.ext import Updater, CommandHandler
+from telegram import Update, ParseMode
+from telegram.ext import Updater, CommandHandler, CallbackContext
 from codecs import encode,decode
 from datetime import datetime
 from ast import literal_eval
@@ -40,19 +40,19 @@ fate_options = {
         1  : '[+]' 
     }
 
-def rf(bot, update, args):
-    if len(args) > 0:
-        args[0] = '4df+' + str(args[0])
+def rf(update: Update, context: CallbackContext):
+    if len(context.args) > 0:
+        context.args[0] = '4df+' + str(context.args[0])
     else:
-        args = ['4df']
-    roll(bot, update, args)
+        context.args = ['4df']
+    roll(update, context)
 
 
-def roll(bot, update, args):
+def roll(update: Update, context: CallbackContext):
     username = update.message.from_user.username if update.message.from_user.username else update.message.from_user.first_name
-    equation = args[0].strip() if len(args) > 0 else False
+    equation = context.args[0].strip() if len(context.args) > 0 else False
     equation_list = re.findall(r'(\w+!?>?\d*)([+*/()-]?)', equation)
-    comment = ' ' + ' '.join(args[1:]) if len(args) > 1 else ''
+    comment = ' ' + ' '.join(context.args[1:]) if len(context.args) > 1 else ''
     space = ''
     dice_num = None
     is_fate = False
@@ -116,7 +116,7 @@ def roll(bot, update, args):
         else:
             raise Exception('Request was not a valid equation!')
 
-        print(' '.join(args) + ' = ' + ''.join(result['equation']) + ' = ' + str(result['total']))
+        print(' '.join(context.args) + ' = ' + ''.join(result['equation']) + ' = ' + str(result['total']))
 
         if use_ladder:
             # Set if final result is positive or negative
@@ -149,10 +149,11 @@ def roll(bot, update, args):
         #if len(error):
         #    logfile.write('\tERROR: ' + error + '\r\n')
 
-    bot.send_message(chat_id=update.message.chat_id, text=response, parse_mode=ParseMode.HTML)
+    #job = context.job
+    context.bot.send_message(chat_id=update.message.chat_id, text=response, parse_mode=ParseMode.HTML)
 
 
-def help(bot, update):
+def help(update: Update, context: CallbackContext):
     response = ("<b>Rollem Bot - Help</b>\r\n"
         "This bot allows you to roll all kinds of dice in "
         "your Telegram messages. To roll dice, you can use the "
@@ -184,12 +185,13 @@ def help(bot, update):
         " - <a href='https://github.com/treetrnk'>Github</a>"
     )
     print('help')
-    bot.send_message(chat_id=update.message.chat_id, text=response, parse_mode=ParseMode.HTML, disable_web_page_preview=True)
+    job = context.job
+    context.bot.send_message(chat_id=update.message.chat_id, text=response, parse_mode=ParseMode.HTML, disable_web_page_preview=True)
     
 
 TOKEN = sys.argv[1]
 
-updater = Updater(token=TOKEN)
+updater = Updater(token=TOKEN, use_context=True)
 dispatcher = updater.dispatcher
 
 roll_handler = CommandHandler(['roll','r'], roll, pass_args=True)
