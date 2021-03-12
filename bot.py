@@ -191,6 +191,7 @@ def process(update: Update, context: CallbackContext):
 def help(update: Update, context: CallbackContext):
     help_file = open('help.html', 'r')
     response = (help_file.read())
+    help_file.close()
     print('help')
     job = context.job
     context.bot.send_message(chat_id=update.message.chat_id, text=response, parse_mode=ParseMode.HTML, disable_web_page_preview=True)
