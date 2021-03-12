@@ -67,7 +67,7 @@ def process(update: Update, context: CallbackContext):
             #print(f"pair: {pair}")
             for item in pair:
                 if item and len(item) > 1 and 'd' in item:
-                    dice = re.search(r'(\d*)d([0-9fF]+)([!hl])?', item)
+                    dice = re.search(r'(\d*)d([0-9fF]+)([!hlHL])?', item)
                     dice_num = int(dice.group(1)) if dice.group(1) else 1
                     if dice_num > 1000:
                         raise Exception('Maximum number of rollable dice is 1000')
@@ -104,7 +104,7 @@ def process(update: Update, context: CallbackContext):
                             fate_dice += fate_options[last_roll] + ' '
 
                         if (highest or lowest) and current_die_results:
-                            print(current_die_results)
+                            #print(current_die_results)
                             if highest:
                                 if last_roll > int(current_die_results):
                                     current_die_results = str(last_roll)
