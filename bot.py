@@ -47,15 +47,6 @@ def rf(update: Update, context: CallbackContext):
         context.args = ['4df']
     process(update, context)
 
-def roll_dice(item):
-    output = {
-        'visual': [],
-        'equation': [],
-        'total': ''
-    }
-
-    return output
-
 def process(update: Update, context: CallbackContext):
     username = update.message.from_user.username if update.message.from_user.username else update.message.from_user.first_name
     equation = context.args[0].strip() if len(context.args) > 0 else False
@@ -181,60 +172,25 @@ def process(update: Update, context: CallbackContext):
                 'For more information, type <code>/help</code>'
             )
         print(e)
+        print(equation)
         print(response)
         error = traceback.format_exc().replace('\r', '').replace('\n', '; ')
 
-        #logfile.write('\r\n\r\n' + str(datetime.now()) + '======================================\r\n')
-        #logfile.write('\tRESPONSE: ' + response.replace('\r', ' ').replace('\n', '') + '\r\n')
-        #if len(error):
-        #    logfile.write('\tERROR: ' + error + '\r\n')
+        logfile = open('roll.log', 'a')
+        logfile.write(str(datetime.now()) + ' | ' + equation + ' | =================\r\n')
+        logfile.write('\tRESPONSE: ' + response.replace('\r', ' ').replace('\n', '') + '\r\n')
+        if len(error):
+            logfile.write('\tERROR: ' + error + '\r\n')
+        logfile.write('\r\n')
+        logfile.close()
 
     #job = context.job
     context.bot.send_message(chat_id=update.message.chat_id, text=response, parse_mode=ParseMode.HTML)
 
 
 def help(update: Update, context: CallbackContext):
-    response = ("<b>Rollem Bot - Help</b>\r\n"
-        "This bot allows you to roll all kinds of dice in "
-        "your Telegram messages. To roll dice, you can use the "
-        "<code>/roll</code> or <code>/r</code> commands, followed by "
-        "<a href='https://en.wikipedia.org/wiki/Dice_notation'>dice notation</a> "
-        "with no spaces in it.\r\n"
-        "For example: <code>/r 4d10+3d6</code>\r\n\r\n"
-        "<b>Highest/Lowest</b>\r\n"
-        "You can take only the highest or lowest result from a set of "
-        "dice by adding an H or L to the dice notation (lowercase works too). "
-        "This is for rules like D&D 5e's advantage and disadvantage.\r\n"
-        "For example: <code>/r 2d20h+3 Int + Advantage</code>\r\n\r\n"
-        "<b>Exploding Dice</b>\r\n"
-        "Exploding dice are dice that can roll again and add to the total "
-        "when the highest number on the die is rolled. These are used in "
-        "games like Savage Worlds. To roll exploding dice, add an exclamation "
-        "point at the end of the dice notation.\r\n"
-        "For example: <code>/r d20!+2</code>\r\n\r\n"
-        "<b>Fate Dice</b>\r\n"
-        "To roll Fate or Fudge dice, you can use the <code>4dF</code> "
-        "notation, or the shorthand command <code>/rf</code>. "
-        "Adding a number after the <code>/rf</code> will add it to the "
-        "total of the four Fate dice. So <code>/rf 3</code> will roll "
-        "4 Fate dice and add 3 to the result.\r\n\r\n"
-        "<b>Comments</b>\r\n"
-        "You can add comments to the end of a roll by separating it from "
-        "the equation with a space, like this: <code>/r 8d6 Fireball!!!"
-        "</code>\r\n\r\n"
-        "<b>Support</b>\r\n"
-        "This bot was created and is worked on in my free time and it is "
-        "hosted on a server that I pay for with my own money. If you "
-        "would like to say thanks, support further development, or "
-        "check out some of my other projects, take a look at the links "
-        "below.\r\n\r\n"
-        " - <a href='https://houstonhare.com/stories/sprig'>Sprig: A fantasy web story with RPG elements</a>\r\n"
-        " - <a href='https://rpg.nathanhare.net'>My RPG blog</a>\r\n"
-        #" - <a href='https://nathanhare.net'>Portfolio</a>\r\n"
-        " - <a href='https://www.drivethrurpg.com/browse/pub/10796/Nathan-Hare'>DriveThruRPG</a>\r\n"
-        " - <a href='https://paypal.me/treetrnk'>Paypal</a>\r\n"
-        " - <a href='https://github.com/treetrnk'>Github</a>"
-    )
+    help_file = open('help.html', 'r')
+    response = (help_file.read())
     print('help')
     job = context.job
     context.bot.send_message(chat_id=update.message.chat_id, text=response, parse_mode=ParseMode.HTML, disable_web_page_preview=True)
