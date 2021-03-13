@@ -91,34 +91,33 @@ def process(update: Update, context: CallbackContext):
                     elif dice.group(3) and dice.group(3)[0] in ['l','L']:
                         lowest = True
 
-                    while dice_num > 0:
-                        random_start_num = 1
-                        if sides in ['f','F']:
-                            is_fate = True
-                            use_ladder = True
-                            sides = 1
-                            random_start_num = -1
-                        else:
-                            sides = int(sides)
+                    random_start_num = 1
+                    if sides in ['f','F']:
+                        is_fate = True
+                        use_ladder = True
+                        sides = 1
+                        random_start_num = -1
+                    else:
+                        sides = int(sides)
 
+                    while dice_num > 0:
+                        
                         last_roll = random.randint(random_start_num, sides)
+                        visual_last_roll = plus + str(last_roll)
                         if is_fate:
-                            fate_dice += fate_options[last_roll] + ' '
+                            visual_last_roll = fate_options[last_roll] + ' '
+                        current_visual_results +=  visual_last_roll
 
                         if (highest or lowest) and current_die_results:
                             #print(current_die_results)
                             if highest:
                                 if last_roll > int(current_die_results):
                                     current_die_results = str(last_roll)
-                                current_visual_results += plus + str(last_roll)
                             else: #lowest
                                 if last_roll < int(current_die_results):
                                     current_die_results = str(last_roll)
-                                current_visual_results += plus + str(last_roll)
-
                         else:
                             current_die_results += plus + str(last_roll)
-                            current_visual_results += plus + str(last_roll)
 
                         if not (explode and last_roll == sides):
                             dice_num -= 1
@@ -129,9 +128,7 @@ def process(update: Update, context: CallbackContext):
 
                     if is_fate:
                         is_fate = False
-                        result['visual'].append(' ' + fate_dice)
-                    else:
-                        result['visual'].append(current_visual_results)
+                    result['visual'].append(current_visual_results)
                     result['equation'].append(current_die_results)
                     result['visual'].append(')')
                     result['equation'].append(')')
