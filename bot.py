@@ -64,10 +64,12 @@ def process(update: Update, context: CallbackContext):
 
     try:
         for pair in equation_list:
-            #print(f"pair: {pair}")
+            logging.debug(f"pair: {pair}")
+            pair = [i for i in pair if i]
             for item in pair:
-                if item and len(item) > 1 and 'd' in item:
-                    dice = re.search(r'(\d*)d([0-9fF]+)([!hlHL])?', item)
+                logging.debug(f"item: {item}")
+                if item and len(item) > 1 and any(d in item for d in ['d', 'D']):
+                    dice = re.search(r'(\d*)d([0-9f]+)([!hl])?', item.lower())
                     dice_num = int(dice.group(1)) if dice.group(1) else 1
                     if dice_num > 1000:
                         raise Exception('Maximum number of rollable dice is 1000')
@@ -147,7 +149,7 @@ def process(update: Update, context: CallbackContext):
         else:
             raise Exception('Request was not a valid equation!')
 
-        print(' '.join(context.args) + ' = ' + ''.join(result['equation']) + ' = ' + str(result['total']))
+        logging.debug(' '.join(context.args) + ' = ' + ''.join(result['equation']) + ' = ' + str(result['total']))
 
         if use_ladder:
             # Set if final result is positive or negative
@@ -171,20 +173,11 @@ def process(update: Update, context: CallbackContext):
                 'For example: <code>3d6</code>, or <code>1d20+5</code>, or <code>d12</code>\r\n\r\n' +
                 'For more information, type <code>/help</code>'
             )
-        print(e)
-        print(equation)
-        print(response)
         error = traceback.format_exc().replace('\r', '').replace('\n', '; ')
+        logging.debug('EQUATION: ' + str(equation) + ' | RESPONSE: ' + response + ' | ERROR: ' + str(error))
 
-        logfile = open('roll.log', 'a')
-        logfile.write(str(datetime.now()) + ' | ' + equation + ' | =================\r\n')
-        logfile.write('\tRESPONSE: ' + response.replace('\r', ' ').replace('\n', '') + '\r\n')
-        if len(error):
-            logfile.write('\tERROR: ' + error + '\r\n')
-        logfile.write('\r\n')
-        logfile.close()
+        logging.error(error + '\r\nRESPONSE: ' + response )
 
-    #job = context.job
     context.bot.send_message(chat_id=update.message.chat_id, text=response, parse_mode=ParseMode.HTML)
 
 
@@ -196,8 +189,19 @@ def help(update: Update, context: CallbackContext):
     job = context.job
     context.bot.send_message(chat_id=update.message.chat_id, text=response, parse_mode=ParseMode.HTML, disable_web_page_preview=True)
     
-
 TOKEN = sys.argv[1]
+
+logging.basicConfig(
+        filename='roll.log', 
+        encoding='utf-8', 
+        format='====> %(asctime)s | %(name)s | %(levelname)s | %(message)s',
+        level=logging.INFO
+    )
+logging.basicConfig(
+        format='====> %(asctime)s | %(name)s | %(levelname)s | %(message)s', 
+        hamdlers = [logging.StreamHandler(sys.stdout)], 
+        level=logging.DEBUG
+    )
 
 updater = Updater(token=TOKEN, use_context=True)
 dispatcher = updater.dispatcher
@@ -210,8 +214,5 @@ dispatcher.add_handler(roll_handler)
 
 help_handler = CommandHandler('help', help)
 dispatcher.add_handler(help_handler)
-
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-         level=logging.INFO)
 
 updater.start_polling()
