@@ -59,6 +59,7 @@ def process(update: Update, context: CallbackContext):
     is_fate = False
     use_ladder = False
     natural20 = False
+    nat20text = ''
     high_low_helper = ''
     if '2d20' in equation.lower() and not ('2d20h' in equation.lower() or '2d20l' in equation.lower()):
         high_low_helper = 'Get the highest or lowest dice from a roll with H and L.\r\nType <code>/help</code> for more info.\r\n\r\n'
@@ -133,8 +134,8 @@ def process(update: Update, context: CallbackContext):
                             # Adds all results to result unless it is the first one
                             plus = ' + '
 
-                        if not natural20 and sides == 20 and last_roll == 20 and original_dice_num < 3 and '20' in current_die_results:
-                            natural20 = True
+                        if sides == 20 and last_roll == 20 and original_dice_num < 3 and '20' in current_die_results:
+                            nat20text = '    #Natural20'
 
                     if is_fate:
                         is_fate = False
@@ -161,8 +162,6 @@ def process(update: Update, context: CallbackContext):
             sign = '+' if result['total'] > -1 else ''
             ladder_result = get_ladder(result['total'])
             result['total'] = sign + str(result['total']) + ' ' + ladder_result
-        elif natural20:
-            result['total'] = str(result['total']) + '    #Natural20'
 
         # Only show part of visual equation if bigger than 300 characters
         result['visual'] = ''.join(result['visual'])
@@ -170,7 +169,7 @@ def process(update: Update, context: CallbackContext):
             result['visual'] = result['visual'][0:275] + ' . . . )'
 
         logging.info(f'@{username} | ' + ' '.join(context.args) + ' = ' + ''.join(result['equation']) + ' = ' + str(result['total']))
-        response = (f'{high_low_helper}@{username} rolled<b>{comment}</b>:\r\n {result["visual"]} =\r\n<b>{str(result["total"])}</b>')
+        response = (f'{high_low_helper}@{username} rolled<b>{comment}</b>:\r\n {result["visual"]} =\r\n<b>{str(result["total"])}</b>{nat20text}')
         error = ''
 
     except Exception as e:
