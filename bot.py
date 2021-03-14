@@ -41,6 +41,7 @@ fate_options = {
     }
 
 def rf(update: Update, context: CallbackContext):
+    logging.debug(context.args)
     if len(context.args) > 0:
         context.args[0] = '4df+' + str(context.args[0])
     else:
@@ -146,7 +147,7 @@ def process(update: Update, context: CallbackContext):
         else:
             raise Exception('Request was not a valid equation!')
 
-        logging.debug(' '.join(context.args) + ' = ' + ''.join(result['equation']) + ' = ' + str(result['total']))
+        logging.info(' '.join(context.args) + ' = ' + ''.join(result['equation']) + ' = ' + str(result['total']))
 
         if use_ladder:
             # Set if final result is positive or negative
@@ -171,9 +172,7 @@ def process(update: Update, context: CallbackContext):
                 'For more information, type <code>/help</code>'
             )
         error = traceback.format_exc().replace('\r', '').replace('\n', '; ')
-        logging.debug('EQUATION: ' + str(equation) + ' | RESPONSE: ' + response + ' | ERROR: ' + str(error))
-
-        logging.error(error + '\r\nRESPONSE: ' + response )
+        logging.warning('/r ' + str(equation) + ' | RESPONSE: Invalid Equation |\r\n' + error)
 
     context.bot.send_message(chat_id=update.message.chat_id, text=response, parse_mode=ParseMode.HTML)
 
@@ -182,23 +181,46 @@ def help(update: Update, context: CallbackContext):
     help_file = open('help.html', 'r')
     response = (help_file.read())
     help_file.close()
-    print('help')
+    logging.info('/help')
     job = context.job
     context.bot.send_message(chat_id=update.message.chat_id, text=response, parse_mode=ParseMode.HTML, disable_web_page_preview=True)
     
 TOKEN = sys.argv[1]
 
-logging.basicConfig(
-        filename='roll.log', 
-        encoding='utf-8', 
-        format='====> %(asctime)s | %(name)s | %(levelname)s | %(message)s',
-        level=logging.INFO
+formatter = logging.Formatter('====> %(asctime)s | %(name)s | %(levelname)s | %(message)s')
+stream_handler = logging.StreamHandler(sys.stdout)
+stream_handler.setLevel(logging.INFO)
+stream_handler.setFormatter(formatter)
+file_handler = logging.FileHandler('roll.log')
+file_handler.setLevel(logging.WARNING)
+file_handler.setFormatter(formatter)
+
+logger = logging.basicConfig(
+        handlers = [stream_handler,file_handler],
+        level=logging.DEBUG,
     )
-logging.basicConfig(
-        format='====> %(asctime)s | %(name)s | %(levelname)s | %(message)s', 
-        hamdlers = [logging.StreamHandler(sys.stdout)], 
-        level=logging.DEBUG
-    )
+#logger = logging.getLogger()
+#logger.setLevel(logging.INFO)
+#stream_handler = logging.StreamHandler(sys.stdout)
+#stream_handler.setLevel(logging.DEBUG)
+#logger.addHandler(stream_handler)
+#file_handler = logging.FileHandler('roll.log')
+#file_handler.setLevel(logging.DEBUG)
+#logger.addHandler(file_handler)
+#formatter = logging.Formatter('====> %(asctime)s | %(name)s | %(levelname)s | %(message)s')
+#logger.setFormatter(formatter)
+
+#file_logger = logging.basicConfig(
+#        filename='roll.log', 
+#        encoding='utf-8', 
+#        format='====> %(asctime)s | %(name)s | %(levelname)s | %(message)s',
+#        level=logging.INFO
+#    )
+#stdout_logger = logging.basicConfig(
+#        format='====> %(asctime)s | %(name)s | %(levelname)s | %(message)s', 
+#        stream=sys.stdout,
+#        level=logging.DEBUG
+#    )
 
 updater = Updater(token=TOKEN, use_context=True)
 dispatcher = updater.dispatcher
