@@ -130,7 +130,7 @@ def process(update: Update, context: CallbackContext):
                             # Adds all results to result unless it is the first one
                             plus = ' + '
 
-                        if not natural20 and sides == 20 and last_roll == 20 and original_dice_num < 3 and not lowest:
+                        if not natural20 and sides == 20 and last_roll == 20 and original_dice_num < 3 and '20' in current_die_results:
                             natural20 = True
 
                     if is_fate:
