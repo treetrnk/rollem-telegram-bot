@@ -2,7 +2,7 @@
 A polyhedral dice rolling bot for [Telegram](https://telegram.org). To use this bot in Telegram, [click here](https://telegram.me/rollembot). This bot was built to enable playing tabletop roleplaying games (RPGs) over Telegram.
 
 ## Requires
-* Telepot - See https://github.com/nickoala/telepot for installation instructions.
+* python-telegram-bot - See https://github.com/python-telegram-bot/python-telegram-bot for installation instructions.
 
 ## Current Features
 * `/roll [equation] [label]` or `/r [equation] [label]`  
@@ -16,14 +16,7 @@ A polyhedral dice rolling bot for [Telegram](https://telegram.org). To use this 
     * Roll 4 Fate (Fudge) dice.
     * Example: `/rf 3 Athletics` 
 
-## Planned Features
-* Dice macros
-* NPC name generator (maybe?)
-* Aspect generator (maybe?)
-
-## Support
-
-If you like this bot and want to show your apprectiation support its development, you can [send donations here](https://www.paypal.me/treetrnk).
+**[SEE THE WIKI](https://github.com/treetrnk/rollem-telegram-bot/wiki) for usage instructions and examples.**
 
 ## Troubleshooting
 
