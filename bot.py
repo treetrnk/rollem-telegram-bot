@@ -59,6 +59,9 @@ def process(update: Update, context: CallbackContext):
     is_fate = False
     use_ladder = False
     natural20 = False
+    high_low_helper = ''
+    if '2d20' in equation.lower() and not ('2d20h' in equation.lower() or '2d20l' in equation.lower()):
+        high_low_helper = 'Get the highest or lowest dice from a roll with H and L.\r\nType <code>/help</code> for more info.\r\n\r\n'
     result = {
         'visual': [],
         'equation': [],
@@ -167,7 +170,7 @@ def process(update: Update, context: CallbackContext):
             result['visual'] = result['visual'][0:275] + ' . . . )'
 
         logging.info(f'@{username} | ' + ' '.join(context.args) + ' = ' + ''.join(result['equation']) + ' = ' + str(result['total']))
-        response = (f'@{username} rolled<b>{comment}</b>:\r\n {result["visual"]} =\r\n<b>{str(result["total"])}</b>')
+        response = (f'{high_low_helper}@{username} rolled<b>{comment}</b>:\r\n {result["visual"]} =\r\n<b>{str(result["total"])}</b>')
         error = ''
 
     except Exception as e:
