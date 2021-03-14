@@ -147,7 +147,7 @@ def process(update: Update, context: CallbackContext):
         else:
             raise Exception('Request was not a valid equation!')
 
-        logging.info(' '.join(context.args) + ' = ' + ''.join(result['equation']) + ' = ' + str(result['total']))
+        logging.info(f'@{username} | ' + ' '.join(context.args) + ' = ' + ''.join(result['equation']) + ' = ' + str(result['total']))
 
         if use_ladder:
             # Set if final result is positive or negative
@@ -172,7 +172,7 @@ def process(update: Update, context: CallbackContext):
                 'For more information, type <code>/help</code>'
             )
         error = traceback.format_exc().replace('\r', '').replace('\n', '; ')
-        logging.warning('/r ' + str(equation) + ' | RESPONSE: Invalid Equation |\r\n' + error)
+        logging.warning(f'@{username} | /r {equation} | RESPONSE: Invalid Equation |\r\n{error}')
 
     context.bot.send_message(chat_id=update.message.chat_id, text=response, parse_mode=ParseMode.HTML)
 
