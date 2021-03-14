@@ -188,10 +188,11 @@ def process(update: Update, context: CallbackContext):
 
 
 def help(update: Update, context: CallbackContext):
+    username = update.message.from_user.username if update.message.from_user.username else update.message.from_user.first_name
     help_file = open('help.html', 'r')
     response = (help_file.read())
     help_file.close()
-    logging.info('/help')
+    logging.info(f'@{username} | /help')
     job = context.job
     context.bot.send_message(chat_id=update.message.chat_id, text=response, parse_mode=ParseMode.HTML, disable_web_page_preview=True)
     
