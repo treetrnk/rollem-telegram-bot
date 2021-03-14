@@ -55,8 +55,10 @@ def process(update: Update, context: CallbackContext):
     comment = ' ' + ' '.join(context.args[1:]) if len(context.args) > 1 else ''
     space = ''
     dice_num = None
+    original_dice_num = None
     is_fate = False
     use_ladder = False
+    natural20 = False
     result = {
         'visual': [],
         'equation': [],
@@ -72,6 +74,7 @@ def process(update: Update, context: CallbackContext):
                 if item and len(item) > 1 and any(d in item for d in ['d', 'D']):
                     dice = re.search(r'(\d*)d([0-9f]+)([!hl])?', item.lower())
                     dice_num = int(dice.group(1)) if dice.group(1) else 1
+                    original_dice_num = dice_num
                     if dice_num > 1000:
                         raise Exception('Maximum number of rollable dice is 1000')
                     sides = dice.group(2)
@@ -127,6 +130,9 @@ def process(update: Update, context: CallbackContext):
                             # Adds all results to result unless it is the first one
                             plus = ' + '
 
+                        if not natural20 and sides == 20 and last_roll == 20 and original_dice_num < 3 and not lowest:
+                            natural20 = True
+
                     if is_fate:
                         is_fate = False
                     result['visual'].append(current_visual_results)
@@ -147,19 +153,20 @@ def process(update: Update, context: CallbackContext):
         else:
             raise Exception('Request was not a valid equation!')
 
-        logging.info(f'@{username} | ' + ' '.join(context.args) + ' = ' + ''.join(result['equation']) + ' = ' + str(result['total']))
-
         if use_ladder:
             # Set if final result is positive or negative
             sign = '+' if result['total'] > -1 else ''
             ladder_result = get_ladder(result['total'])
             result['total'] = sign + str(result['total']) + ' ' + ladder_result
+        elif natural20:
+            result['total'] = str(result['total']) + '  -  Natural 20!'
 
         # Only show part of visual equation if bigger than 300 characters
         result['visual'] = ''.join(result['visual'])
         if len(result['visual']) > 275:
             result['visual'] = result['visual'][0:275] + ' . . . )'
 
+        logging.info(f'@{username} | ' + ' '.join(context.args) + ' = ' + ''.join(result['equation']) + ' = ' + str(result['total']))
         response = (f'@{username} rolled<b>{comment}</b>:\r\n {result["visual"]} =\r\n<b>{str(result["total"])}</b>')
         error = ''
 
