@@ -58,7 +58,6 @@ def process(update: Update, context: CallbackContext):
     original_dice_num = None
     is_fate = False
     use_ladder = False
-    natural20 = False
     nat20text = ''
     high_low_helper = ''
     if '2d20' in equation.lower() and not ('2d20h' in equation.lower() or '2d20l' in equation.lower()):
@@ -168,7 +167,7 @@ def process(update: Update, context: CallbackContext):
         if len(result['visual']) > 275:
             result['visual'] = result['visual'][0:275] + ' . . . )'
 
-        logging.info(f'@{username} | ' + ' '.join(context.args) + ' = ' + ''.join(result['equation']) + ' = ' + str(result['total']))
+        logging.info(f'@{username} | ' + ' '.join(context.args) + ' = ' + ''.join(result['equation']) + ' = ' + str(result['total']) + nat20text)
         response = (f'{high_low_helper}@{username} rolled<b>{comment}</b>:\r\n {result["visual"]} =\r\n<b>{str(result["total"])}</b>{nat20text}')
         error = ''
 
