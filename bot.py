@@ -162,7 +162,7 @@ def process(update: Update, context: CallbackContext):
             ladder_result = get_ladder(result['total'])
             result['total'] = sign + str(result['total']) + ' ' + ladder_result
         elif natural20:
-            result['total'] = str(result['total']) + '  -  Natural 20!'
+            result['total'] = str(result['total']) + '    #Natural20'
 
         # Only show part of visual equation if bigger than 300 characters
         result['visual'] = ''.join(result['visual'])
