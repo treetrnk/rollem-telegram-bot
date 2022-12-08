@@ -1,4 +1,4 @@
-certifi==2019.9.11
+certifi==2022.12.7
 cffi==1.13.2
 cryptography==3.4.6
 future==0.18.2
