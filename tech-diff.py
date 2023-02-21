@@ -1,20 +1,23 @@
-#! /home/nathan/.virtualenvs/rollem/bin/python
 import sys
 import logging
-from telegram.ext import Updater, CommandHandler
+from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler
 
-def roll(bot, update):
-    bot.send_message(chat_id=update.message.chat_id, text="Technical difficulties. Working on a fix now!")
+# CONFIGURATION
 
 TOKEN = sys.argv[1]
 
-updater = Updater(token=TOKEN)
-dispatcher = updater.dispatcher
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO
+)
 
-roll_handler = CommandHandler('roll', roll)
-dispatcher.add_handler(roll_handler)
+# HANDLERS
 
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-         level=logging.INFO)
+def warning(bot, update):
+    bot.send_message(chat_id=update.message.chat_id, text="Estamos com problemas técnicos no momento. Tente novamente mais tarde.")
 
-updater.start_polling()
+# MAIN
+if __name__ == '__main__':
+    app = ApplicationBuilder(TOKEN)
+    app.add_handler(CommandHandler(['start', 'help', 'roll', 'r', 'rf'], warning, context_types=ContextTypes.ALL))
+    app.run()

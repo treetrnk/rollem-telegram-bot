@@ -1,23 +1,24 @@
 # RollEm Telegram Bot
-A polyhedral dice rolling bot for [Telegram](https://telegram.org). To use this bot in Telegram, [click here](https://telegram.me/rollembot). This bot was built to enable playing tabletop roleplaying games (RPGs) over Telegram.
+Um bot de rolagem de dados poliédricos para [Telegram](https://telegram.org). Para usar este bot no Telegram, [clique aqui](https://t.me/sddicerollbot). Este bot foi construído para permitir a jogabilidade de jogos de mesa de RPG (RPGs) no Telegram.
 
-## Requires
-* python-telegram-bot - See https://github.com/python-telegram-bot/python-telegram-bot for installation instructions.
+## Requerimentos
+* python-telegram-bot - Veja https://github.com/python-telegram-bot/python-telegram-bot para instruções de instalação.
 
-## Current Features
-* `/roll [equation] [label]` or `/r [equation] [label]`  
-    * Equation is required, label is optional. 
-    * Roll dice using [dice notation](https://en.wikipedia.org/wiki/Dice_notation) as the equation (includes Fate/Fudge Dice with 4dF). Do not include spaces in the equation. 
-    * Example: `/roll 4d8+16-2d4`
-    * Exploding dice with exclamation point: `/r 6d6!`
-    * Highest and Lowest dice kept for advantage/disadvantage: `/r 2d20H Advantage`
-* `/rf [modifier] [label]`  
-    * The modifier and label are optional, but if both are given the modifier must come first.
-    * Roll 4 Fate (Fudge) dice.
-    * Example: `/rf 3 Athletics` 
+## Recursos Atuais
 
-**[SEE THE WIKI](https://github.com/treetrnk/rollem-telegram-bot/wiki) for usage instructions and examples.**
+* `/roll [equação] [rótulo]` ou `/r [equação] [rótulo]`  
+    * A equação é obrigatória, o rótulo é opcional. 
+    * Role dados usando [notação de dados](https://en.wikipedia.org/wiki/Dice_notation) como equação (inclui dados Fate/Fudge com 4dF). Não inclua espaços na equação. 
+    * Exemplo: `/roll 4d8+16-2d4`
+    * Dados explosivos com ponto de exclamação: `/r 6d6!` (Caso o dado seja o maior número possível, ele será rolado novamente e somado ao resultado anterior)
+    * Dados mais altos e mais baixos mantidos para vantagem/desvantagem: `/r 2d20H Advantage`
+* `/rf [modificador] [rótulo]`
+    * O modificador e o rótulo são opcionais, mas se ambos forem fornecidos, o modificador deve vir primeiro.
+    * Role 4 dados Fate (Fudge).
+    * Exemplo: `/rf 3 Atletismo`
 
-## Troubleshooting
+**[VEJA A WIKI](https://github.com/miguelvieirart/rollem-telegram-bot/wiki) para instruções de uso e exemplos.**
 
-If you are receiving an error that says `Server response could not be decoded using UTF-8`, make the following changes to the python-telegram-bot requests.py file: [Bug Fix Diff](https://github.com/python-telegram-bot/python-telegram-bot/pull/1623/files)
+## Solução de Problemas
+
+Se você estiver recebendo um erro que diz `Server response could not be decoded using UTF-8`, faça as seguintes alterações no arquivo requests.py do python-telegram-bot: [Bug Fix Diff](https://github.com/python-telegram-bot/python-telegram-bot/pull/1623/files)
