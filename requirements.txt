@@ -1,8 +1,8 @@
-certifi==2019.9.11
-cffi==1.13.2
-cryptography==3.4.6
-future==0.18.2
-pycparser==2.19
-python-telegram-bot==12.2.0
-six==1.13.0
-tornado==6.0.3
+certifi>=2020.9.11
+cffi>=1.13.2
+cryptography>=3.4.6
+future>=0.18.2
+pycparser>=2.19
+python-telegram-bot>=13.0.0
+six>=1.13.0
+tornado>=6.0.3

@@ -6,8 +6,9 @@ import random
 import traceback
 import unicodedata
 import logging
-from telegram import Update, ParseMode
-from telegram.ext import Updater, CommandHandler, CallbackContext
+from telegram import Update
+#from telegram.ext import ApplicationBuilder, Updater, CommandHandler, CallbackContext
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 from codecs import encode,decode
 from datetime import datetime
 from ast import literal_eval
@@ -40,7 +41,7 @@ fate_options = {
         1  : '[+]' 
     }
 
-def rf(update: Update, context: CallbackContext):
+async def rf(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     logging.debug(context.args)
     if len(context.args) > 0:
         context.args[0] = '4df+' + str(context.args[0])
@@ -48,7 +49,7 @@ def rf(update: Update, context: CallbackContext):
         context.args = ['4df']
     process(update, context)
 
-def process(update: Update, context: CallbackContext):
+async def process(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     username = update.message.from_user.username if update.message.from_user.username else update.message.from_user.first_name
     equation = context.args[0].strip() if len(context.args) > 0 else False
     equation_list = re.findall(r'(\w+!?>?\d*)([+*/()-]?)', equation)
@@ -182,17 +183,17 @@ def process(update: Update, context: CallbackContext):
         error = traceback.format_exc().replace('\r', '').replace('\n', '; ')
         logging.warning(f'@{username} | /r {equation} | RESPONSE: Invalid Equation |\r\n{error}')
 
-    context.bot.send_message(chat_id=update.message.chat_id, text=response, parse_mode=ParseMode.HTML)
+    context.bot.send_message(chat_id=update.message.chat_id, text=response, parse_mode='HTML')
 
 
-def help(update: Update, context: CallbackContext):
+async def help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     username = update.message.from_user.username if update.message.from_user.username else update.message.from_user.first_name
     help_file = open('help.html', 'r')
     response = (help_file.read())
     help_file.close()
     logging.info(f'@{username} | /help')
     job = context.job
-    context.bot.send_message(chat_id=update.message.chat_id, text=response, parse_mode=ParseMode.HTML, disable_web_page_preview=True)
+    context.bot.send_message(chat_id=update.message.chat_id, text=response, parse_mode='HTML', disable_web_page_preview=True)
     
 TOKEN = sys.argv[1]
 
@@ -209,7 +210,29 @@ logger = logging.basicConfig(
         level=logging.DEBUG,
     )
 
-updater = Updater(token=TOKEN, use_context=True)
+
+def main() -> None:
+
+    """Start the bot."""
+    # Create the Application and pass it your bot's token.
+    app = ApplicationBuilder().token(TOKEN).build()
+
+    # on different commands - answer in Telegram
+    app.add_handler(CommandHandler(['roll','r'], process))
+    app.add_handler(CommandHandler('rf', rf))
+    app.add_handler(CommandHandler('help', help))
+
+    # on non command i.e message - echo the message on Telegram
+    # application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
+
+    # Run the bot until the user presses Ctrl-C
+    application.run_polling()
+
+if __name__ == "__main__":
+    main()
+
+"""
+updater = Updater(TOKEN, True)
 dispatcher = updater.dispatcher
 
 roll_handler = CommandHandler(['roll','r'], process, pass_args=True)
@@ -222,3 +245,4 @@ help_handler = CommandHandler('help', help)
 dispatcher.add_handler(help_handler)
 
 updater.start_polling()
+"""
