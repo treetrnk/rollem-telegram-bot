@@ -47,7 +47,7 @@ async def rf(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         context.args[0] = '4df+' + str(context.args[0])
     else:
         context.args = ['4df']
-    process(update, context)
+    await process(update, context)
 
 async def process(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     username = update.message.from_user.username if update.message.from_user.username else update.message.from_user.first_name
@@ -183,7 +183,8 @@ async def process(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         error = traceback.format_exc().replace('\r', '').replace('\n', '; ')
         logging.warning(f'@{username} | /r {equation} | RESPONSE: Invalid Equation |\r\n{error}')
 
-    context.bot.send_message(chat_id=update.message.chat_id, text=response, parse_mode='HTML')
+    await update.message.reply_text(response, parse_mode='HTML')
+    #context.bot.send_message(chat_id=update.message.chat_id, text=response, parse_mode='HTML')
 
 
 async def help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -192,8 +193,9 @@ async def help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     response = (help_file.read())
     help_file.close()
     logging.info(f'@{username} | /help')
-    job = context.job
-    context.bot.send_message(chat_id=update.message.chat_id, text=response, parse_mode='HTML', disable_web_page_preview=True)
+    await update.message.reply_text(response, parse_mode='HTML')
+    #job = context.job
+    #context.bot.send_message(chat_id=update.message.chat_id, text=response, parse_mode='HTML', disable_web_page_preview=True)
     
 TOKEN = sys.argv[1]
 
@@ -226,7 +228,7 @@ def main() -> None:
     # application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
 
     # Run the bot until the user presses Ctrl-C
-    application.run_polling()
+    app.run_polling()
 
 if __name__ == "__main__":
     main()
