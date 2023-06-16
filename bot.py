@@ -62,7 +62,8 @@ async def process(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     nat20text = ''
     high_low_helper = ''
     if '2d20' in equation.lower() and not ('2d20h' in equation.lower() or '2d20l' in equation.lower()):
-        high_low_helper = 'Get the highest or lowest dice from a roll with H and L.\r\nType <code>/help</code> for more info.\r\n\r\n'
+        pass
+        #high_low_helper = 'Get the highest or lowest dice from a roll with H and L.\r\nType <code>/help</code> for more info.\r\n\r\n'
     result = {
         'visual': [],
         'equation': [],
