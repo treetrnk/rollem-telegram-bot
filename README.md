@@ -18,6 +18,12 @@ A polyhedral dice rolling bot for [Telegram](https://telegram.org). To use this 
 
 **[SEE THE WIKI](https://github.com/treetrnk/rollem-telegram-bot/wiki) for usage instructions and examples.**
 
+## Running The Code
+
+To run the code, download and extract to a folder. You will need to use the Bot Father bot to generate a token for your app. Once you have that token, use the command below to run the bot. Replace `/PATH/TO/` with the path to bot.py on your computer and `[YOUR_TOKEN_HERE]` with the token you just generated through the Bot Father.
+
+`/PATH/TO/bot.py [YOUR_TOKEN_HERE]`
+
 ## Troubleshooting
 
 If you are receiving an error that says `Server response could not be decoded using UTF-8`, make the following changes to the python-telegram-bot requests.py file: [Bug Fix Diff](https://github.com/python-telegram-bot/python-telegram-bot/pull/1623/files)
